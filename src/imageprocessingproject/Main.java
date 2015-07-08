@@ -5,11 +5,17 @@
  */
 package imageprocessingproject;
 
+import java.awt.BorderLayout;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
 /**
@@ -21,15 +27,21 @@ public class Main extends javax.swing.JFrame {
     /**
      * Creates new form Main
      */
-    private JTextField PathImage = null;
     private File PathIm = null;  //  @jve:decl-index=0:
     String namePathImage = null;
     JFileChooser chooser = new JFileChooser(".");
+    private JPanel jContentPane1 = null;
+    private JPanel jContentPane2 = null;
+    JPanel panel = null;
+    JTextArea textArea = null;
+    RGBchannel channel;
+    Metadata metadata;
     
     public Main() {
         initComponents();
     }
 
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -39,19 +51,27 @@ public class Main extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jMenuItem6 = new javax.swing.JMenuItem();
+        jTabbedPane1 = new javax.swing.JTabbedPane();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         jMenuItem1 = new javax.swing.JMenuItem();
         jMenuItem2 = new javax.swing.JMenuItem();
         jMenuItem3 = new javax.swing.JMenuItem();
+        jMenuItem8 = new javax.swing.JMenuItem();
         jMenuItem5 = new javax.swing.JMenuItem();
         jMenu2 = new javax.swing.JMenu();
         jMenuItem4 = new javax.swing.JMenuItem();
+        jMenuItem7 = new javax.swing.JMenuItem();
+
+        jMenuItem6.setText("jMenuItem6");
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Image Processing Tool");
         setForeground(new java.awt.Color(195, 243, 231));
         setType(java.awt.Window.Type.UTILITY);
+        getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+        getContentPane().add(jTabbedPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(150, 20, 530, 390));
 
         jMenu1.setText("File");
 
@@ -68,11 +88,24 @@ public class Main extends javax.swing.JFrame {
         jMenuItem2.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.CTRL_MASK));
         jMenuItem2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/Save.png"))); // NOI18N
         jMenuItem2.setText("Save");
+        jMenuItem2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem2ActionPerformed(evt);
+            }
+        });
         jMenu1.add(jMenuItem2);
 
         jMenuItem3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/saveas.png"))); // NOI18N
         jMenuItem3.setText("Save As");
         jMenu1.add(jMenuItem3);
+
+        jMenuItem8.setText("MetaData");
+        jMenuItem8.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem8ActionPerformed(evt);
+            }
+        });
+        jMenu1.add(jMenuItem8);
 
         jMenuItem5.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/close.png"))); // NOI18N
         jMenuItem5.setText("Close");
@@ -91,20 +124,17 @@ public class Main extends javax.swing.JFrame {
         jMenuItem4.setText("Clone");
         jMenu2.add(jMenuItem4);
 
+        jMenuItem7.setText("RGBChannel");
+        jMenuItem7.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem7ActionPerformed(evt);
+            }
+        });
+        jMenu2.add(jMenuItem7);
+
         jMenuBar1.add(jMenu2);
 
         setJMenuBar(jMenuBar1);
-
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 400, Short.MAX_VALUE)
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 279, Short.MAX_VALUE)
-        );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -112,31 +142,97 @@ public class Main extends javax.swing.JFrame {
     private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
         // TODO add your handling code here:
         openDialog();
+        jMenuItem1.setEnabled(false);
     }//GEN-LAST:event_jMenuItem1ActionPerformed
 
     private void jMenuItem5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem5ActionPerformed
         // TODO add your handling code here:
-        System.exit(0);
+        jMenuItem1.setEnabled(true);
+        namePathImage = null;
+        File PathIm = null;
+        jTabbedPane1.removeAll();
+        //System.exit(0);
     }//GEN-LAST:event_jMenuItem5ActionPerformed
+
+    private void jMenuItem2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem2ActionPerformed
+        // TODO add your handling code here:
+        JFileChooser c = new JFileChooser();
+      // Demonstrate "Save" dialog:
+      int rVal = c.showSaveDialog(this);
+      if (rVal == JFileChooser.APPROVE_OPTION) {
+        File f = c.getSelectedFile();
+      }
+    }//GEN-LAST:event_jMenuItem2ActionPerformed
+
+    private void jMenuItem7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem7ActionPerformed
+        // TODO add your handling code here:
+        channel = new RGBchannel(namePathImage);
+    }//GEN-LAST:event_jMenuItem7ActionPerformed
+
+    private void jMenuItem8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem8ActionPerformed
+        // TODO add your handling code here:
+        metadata = new Metadata();
+        textArea =metadata.readAndDisplayMetadata(namePathImage);
+        jTabbedPane1.add("MetaData",textArea);
+    }//GEN-LAST:event_jMenuItem8ActionPerformed
     
-    private void openDialog() {
+   private void openDialog() {
         if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
             //System.out.println("selectedFile = " + chooser.getSelectedFile());
             namePathImage = chooser.getSelectedFile().getAbsolutePath();
             //System.out.println("namePathImage = " + namePathImage);
-            JPanel panel = null;
-           
+            
+            try {
+                panel = getJContentPane1();
+                jTabbedPane1.add(namePathImage,panel);
+            } catch(IOException e) {
+                System.out.println("io error: " + e.getMessage());
+                return;
+            }
             //PathImage.setText(namePathImage);
             // JInternalFrames are designed to go in a JDesktopPane
             // Let's use a JDialog for now...
-            JDialog d = new JDialog(this, "Image Dialog", false);
-            this.getContentPane().add(panel);
-            this.pack();
-            this.setLocationRelativeTo(this);
-            this.setVisible(true);
+            
+            
+            
+           /*** JDialog d = new JDialog(this, "Image Dialog", false);
+            d.getContentPane().add(panel);
+            d.pack();
+            d.setLocationRelativeTo(this);
+            d.setVisible(true);
+        
+        **/
         }
     }
     
+    
+    private JPanel getJContentPane1() throws IOException {
+        if (jContentPane1 == null) {
+            jContentPane1 = new JPanel();
+            jContentPane1.setLayout(new BorderLayout());
+           // jContentPane1.add(getPathImage(), BorderLayout.NORTH);
+           //System.out.println("Name Image Path = "+namePathImage);
+        }
+        // remove the last label before we add a new one
+        if(jContentPane1.getComponentCount() > 1)
+            jContentPane1.remove(1);
+        JLabel label = new JLabel();
+        label.setHorizontalAlignment(JLabel.CENTER);
+        if(namePathImage != null) {
+            File file = new File(namePathImage);
+            //System.out.println("file path = " + file.getPath());
+            BufferedImage image = ImageIO.read(file);
+            ImageIcon icon = new ImageIcon(image);
+            label.setIcon(icon);
+        } else {
+            label.setText("namePathImage = " + namePathImage);
+        }
+        jContentPane1.add(label, BorderLayout.CENTER);
+        jContentPane1.revalidate();
+        return jContentPane1;
+    }
+ 
+  
     
     /**
      * @param args the command line arguments
@@ -182,5 +278,9 @@ public class Main extends javax.swing.JFrame {
     private javax.swing.JMenuItem jMenuItem3;
     private javax.swing.JMenuItem jMenuItem4;
     private javax.swing.JMenuItem jMenuItem5;
+    private javax.swing.JMenuItem jMenuItem6;
+    private javax.swing.JMenuItem jMenuItem7;
+    private javax.swing.JMenuItem jMenuItem8;
+    private javax.swing.JTabbedPane jTabbedPane1;
     // End of variables declaration//GEN-END:variables
 }
