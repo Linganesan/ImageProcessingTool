@@ -44,6 +44,7 @@ public class Main extends javax.swing.JFrame {
     
     public Main() {
         initComponents();
+        closedMenuItems();
     }
 
     
@@ -57,6 +58,7 @@ public class Main extends javax.swing.JFrame {
     private void initComponents() {
 
         jMenuItem6 = new javax.swing.JMenuItem();
+        jMenuItem1 = new javax.swing.JMenuItem();
         jTabbedPane1 = new javax.swing.JTabbedPane();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
@@ -65,11 +67,14 @@ public class Main extends javax.swing.JFrame {
         saveasmenu = new javax.swing.JMenuItem();
         metaDatamenu = new javax.swing.JMenuItem();
         closemenu = new javax.swing.JMenuItem();
-        jMenu2 = new javax.swing.JMenu();
-        jMenuItem4 = new javax.swing.JMenuItem();
+        exitmenu = new javax.swing.JMenuItem();
+        rgbmenu = new javax.swing.JMenu();
+        clonemenu = new javax.swing.JMenuItem();
         jMenuItem7 = new javax.swing.JMenuItem();
 
         jMenuItem6.setText("jMenuItem6");
+
+        jMenuItem1.setText("jMenuItem1");
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Image Processing Tool");
@@ -109,6 +114,7 @@ public class Main extends javax.swing.JFrame {
         });
         jMenu1.add(saveasmenu);
 
+        metaDatamenu.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/Metadata.jpg"))); // NOI18N
         metaDatamenu.setText("MetaData");
         metaDatamenu.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -126,23 +132,33 @@ public class Main extends javax.swing.JFrame {
         });
         jMenu1.add(closemenu);
 
+        exitmenu.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/Exit.jpg"))); // NOI18N
+        exitmenu.setText("Exit");
+        exitmenu.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                exitmenuActionPerformed(evt);
+            }
+        });
+        jMenu1.add(exitmenu);
+
         jMenuBar1.add(jMenu1);
 
-        jMenu2.setText("Edit");
+        rgbmenu.setText("Edit");
 
-        jMenuItem4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/clone.png"))); // NOI18N
-        jMenuItem4.setText("Clone");
-        jMenu2.add(jMenuItem4);
+        clonemenu.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/clone.png"))); // NOI18N
+        clonemenu.setText("Clone");
+        rgbmenu.add(clonemenu);
 
+        jMenuItem7.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/RGB.jpg"))); // NOI18N
         jMenuItem7.setText("RGBChannel");
         jMenuItem7.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jMenuItem7ActionPerformed(evt);
             }
         });
-        jMenu2.add(jMenuItem7);
+        rgbmenu.add(jMenuItem7);
 
-        jMenuBar1.add(jMenu2);
+        jMenuBar1.add(rgbmenu);
 
         setJMenuBar(jMenuBar1);
 
@@ -150,19 +166,17 @@ public class Main extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void openmenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openmenuActionPerformed
-        // TODO add your handling code here:
-        openDialog();
-        
+            openDialog();
+                  
     }//GEN-LAST:event_openmenuActionPerformed
 
     private void closemenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_closemenuActionPerformed
-        // TODO add your handling code here:
-        openmenu.setEnabled(true);
+       closedMenuItems();
         namePathImage = null;
         savepath = null;
         File PathIm = null;
         jTabbedPane1.removeAll();
-        //System.exit(0);
+        
     }//GEN-LAST:event_closemenuActionPerformed
 
     private void savemenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_savemenuActionPerformed
@@ -181,12 +195,10 @@ public class Main extends javax.swing.JFrame {
     }//GEN-LAST:event_savemenuActionPerformed
 
     private void jMenuItem7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem7ActionPerformed
-        // TODO add your handling code here:
         channel = new RGBchannel(namePathImage);
     }//GEN-LAST:event_jMenuItem7ActionPerformed
 
     private void metaDatamenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_metaDatamenuActionPerformed
-        // TODO add your handling code here:
         metadata = new Metadata();
         textArea =metadata.readAndDisplayMetadata(namePathImage);
         jTabbedPane1.add("MetaData",textArea);
@@ -200,20 +212,44 @@ public class Main extends javax.swing.JFrame {
         } catch (IOException ex) {
             Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
         }
-      // Demonstrate "Save" dialog:
-      File saveFile = new File("ImageName." + "png");
-      JFileChooser chooser = new JFileChooser();
-      chooser.setSelectedFile(saveFile);
-      int rval = chooser.showSaveDialog(this);
-      if (rval == JFileChooser.APPROVE_OPTION) {
-        saveFile = chooser.getSelectedFile();
-         savepath=saveFile;
-        try {
-             ImageIO.write(bi,"jpeg", saveFile);
+        // Demonstrate "Save" dialog:
+        File saveFile = new File("ImageName." + "png");
+        JFileChooser chooser = new JFileChooser();
+        chooser.setSelectedFile(saveFile);
+        int rval = chooser.showSaveDialog(this);
+        if (rval == JFileChooser.APPROVE_OPTION) {
+            saveFile = chooser.getSelectedFile();
+            savepath=saveFile;
+            try {
+                 ImageIO.write(bi,"jpeg", saveFile);
             } catch (IOException ex) {
            }
         }
     }//GEN-LAST:event_saveasmenuActionPerformed
+
+    private void exitmenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exitmenuActionPerformed
+        System.exit(0);
+    }//GEN-LAST:event_exitmenuActionPerformed
+    
+   private void closedMenuItems(){
+        savemenu.setEnabled(false);
+        saveasmenu.setEnabled(false);
+        metaDatamenu.setEnabled(false);
+        closemenu.setEnabled(false);
+        clonemenu.setEnabled(false);
+        rgbmenu.setEnabled(false);
+        openmenu.setEnabled(true);
+    } 
+   
+    private void openMenuItems(){
+        savemenu.setEnabled(true);
+        saveasmenu.setEnabled(true);
+        metaDatamenu.setEnabled(true);
+        closemenu.setEnabled(true);
+        clonemenu.setEnabled(true);
+        rgbmenu.setEnabled(true);
+        openmenu.setEnabled(false);
+    } 
     
    private void openDialog() {
         if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
@@ -224,24 +260,11 @@ public class Main extends javax.swing.JFrame {
             try {
                 panel = getJContentPane1();
                 jTabbedPane1.add(namePathImage,panel);
-                openmenu.setEnabled(false);
-            } catch(IOException e) {
+                 openMenuItems();
+                } catch(IOException e) {
                 System.out.println("io error: " + e.getMessage());
                 return;
             }
-            //PathImage.setText(namePathImage);
-            // JInternalFrames are designed to go in a JDesktopPane
-            // Let's use a JDialog for now...
-            
-            
-            
-           /*** JDialog d = new JDialog(this, "Image Dialog", false);
-            d.getContentPane().add(panel);
-            d.pack();
-            d.setLocationRelativeTo(this);
-            d.setVisible(true);
-        
-        **/
         }
     }
     
@@ -250,10 +273,7 @@ public class Main extends javax.swing.JFrame {
         if (jContentPane1 == null) {
             jContentPane1 = new JPanel();
             jContentPane1.setLayout(new BorderLayout());
-           // jContentPane1.add(getPathImage(), BorderLayout.NORTH);
-           //System.out.println("Name Image Path = "+namePathImage);
         }
-        // remove the last label before we add a new one
         if(jContentPane1.getComponentCount() > 1)
             jContentPane1.remove(1);
         JLabel label = new JLabel();
@@ -310,16 +330,18 @@ public class Main extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JMenuItem clonemenu;
     private javax.swing.JMenuItem closemenu;
+    private javax.swing.JMenuItem exitmenu;
     private javax.swing.JMenu jMenu1;
-    private javax.swing.JMenu jMenu2;
     private javax.swing.JMenuBar jMenuBar1;
-    private javax.swing.JMenuItem jMenuItem4;
+    private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JMenuItem jMenuItem6;
     private javax.swing.JMenuItem jMenuItem7;
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JMenuItem metaDatamenu;
     private javax.swing.JMenuItem openmenu;
+    private javax.swing.JMenu rgbmenu;
     private javax.swing.JMenuItem saveasmenu;
     private javax.swing.JMenuItem savemenu;
     // End of variables declaration//GEN-END:variables
