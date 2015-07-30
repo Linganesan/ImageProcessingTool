@@ -31,7 +31,7 @@ public class Main extends javax.swing.JFrame {
      * Creates new form Main
      */
     private File PathIm = null; 
-     private File savepath = null; 
+    private File savepath = null; 
     String namePathImage = null;
     JFileChooser chooser = new JFileChooser(".");
     private JPanel jContentPane1 = null;
@@ -40,7 +40,8 @@ public class Main extends javax.swing.JFrame {
     JTextArea textArea = null;
     RGBchannel channel;
     Metadata metadata;
-    BufferedImage image;
+    BufferedImage image =null;
+    private boolean savetrigger = true;
     
     public Main() {
         initComponents();
@@ -172,26 +173,15 @@ public class Main extends javax.swing.JFrame {
 
     private void closemenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_closemenuActionPerformed
        closedMenuItems();
-        namePathImage = null;
-        savepath = null;
-        File PathIm = null;
-        jTabbedPane1.removeAll();
+        
         
     }//GEN-LAST:event_closemenuActionPerformed
 
     private void savemenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_savemenuActionPerformed
-       BufferedImage bi = null;
-        
-        try {
-            bi = ImageIO.read(PathIm);
-        } catch (IOException ex) {
-            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
-        }
-      try {
-        ImageIO.write(bi,"jpeg", savepath);
-        } catch (IOException ex) {
-       }
-           
+       if(savetrigger)
+           saveAs();
+       else
+           save();
     }//GEN-LAST:event_savemenuActionPerformed
 
     private void jMenuItem7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem7ActionPerformed
@@ -205,7 +195,33 @@ public class Main extends javax.swing.JFrame {
     }//GEN-LAST:event_metaDatamenuActionPerformed
 
     private void saveasmenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveasmenuActionPerformed
-         BufferedImage bi = null;
+        saveAs();
+      
+    }//GEN-LAST:event_saveasmenuActionPerformed
+
+    private void exitmenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exitmenuActionPerformed
+        System.exit(0);
+    }//GEN-LAST:event_exitmenuActionPerformed
+    
+    private void save(){
+        BufferedImage bi = null;
+        
+        try {
+            bi = ImageIO.read(PathIm);
+        } catch (IOException ex) {
+            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+        }
+      try {
+        ImageIO.write(bi,"jpeg", savepath);
+        } catch (IOException ex) {
+       }
+    
+    
+    
+    }
+    
+    private void saveAs(){
+        BufferedImage bi = null;
         
         try {
             bi = ImageIO.read(PathIm);
@@ -222,16 +238,13 @@ public class Main extends javax.swing.JFrame {
             savepath=saveFile;
             try {
                  ImageIO.write(bi,"jpeg", saveFile);
+                   savetrigger =false;
             } catch (IOException ex) {
            }
         }
-    }//GEN-LAST:event_saveasmenuActionPerformed
-
-    private void exitmenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exitmenuActionPerformed
-        System.exit(0);
-    }//GEN-LAST:event_exitmenuActionPerformed
+    }
     
-   private void closedMenuItems(){
+    private void closedMenuItems(){
         savemenu.setEnabled(false);
         saveasmenu.setEnabled(false);
         metaDatamenu.setEnabled(false);
@@ -239,6 +252,11 @@ public class Main extends javax.swing.JFrame {
         clonemenu.setEnabled(false);
         rgbmenu.setEnabled(false);
         openmenu.setEnabled(true);
+        namePathImage = null;
+        savepath = null;
+        PathIm = null;
+        jTabbedPane1.removeAll();
+        image=null;
     } 
    
     private void openMenuItems(){
@@ -251,7 +269,7 @@ public class Main extends javax.swing.JFrame {
         openmenu.setEnabled(false);
     } 
     
-   private void openDialog() {
+    private void openDialog() {
         if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
             //System.out.println("selectedFile = " + chooser.getSelectedFile());
             namePathImage = chooser.getSelectedFile().getAbsolutePath();
@@ -268,20 +286,19 @@ public class Main extends javax.swing.JFrame {
         }
     }
     
-    
     private JPanel getJContentPane1() throws IOException {
         if (jContentPane1 == null) {
             jContentPane1 = new JPanel();
             jContentPane1.setLayout(new BorderLayout());
         }
-        if(jContentPane1.getComponentCount() > 1)
-            jContentPane1.remove(1);
+       
+        jContentPane1.removeAll();
         JLabel label = new JLabel();
         label.setHorizontalAlignment(JLabel.CENTER);
         if(namePathImage != null) {
             File file = new File(namePathImage);
             PathIm =file;
-            //System.out.println("file path = " + file.getPath());
+            System.out.println("file path = " + file.getPath());
             image = ImageIO.read(file);
             ImageIcon icon = new ImageIcon(image);
             label.setIcon(icon);
