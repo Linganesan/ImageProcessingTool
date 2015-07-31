@@ -23,7 +23,7 @@ public class Metadata {
     }
     
 
-   JTextArea readAndDisplayMetadata( String fileName ) {
+   public JTextArea readAndDisplayMetadata( String fileName ) {
         try {
 
             File file = new File( fileName );
@@ -57,16 +57,16 @@ public class Metadata {
         return textArea;
     }
 
-     void displayMetadata(Node root) {
+    public  void displayMetadata(Node root) {
         displayMetadata(root, 0);
     }
 
-    void indent(int level) {
+    public void indent(int level) {
         for (int i = 0; i < level; i++)
              textArea.append("    ");
     }
 
-    void displayMetadata(Node node, int level) {
+    public void displayMetadata(Node node, int level) {
         // print open tag of element
        
         indent(level);
@@ -79,19 +79,19 @@ public class Metadata {
             for (int i = 0; i < length; i++) {
                 Node attr = map.item(i);
                 textArea.append(" " + attr.getNodeName() +
-                                 "=\"" + attr.getNodeValue() + "\"");
+                                 "=\"" + attr.getNodeValue() + "\"\n");
             }
         }
 
         Node child = node.getFirstChild();
         if (child == null) {
             // no children, so close element and return
-             textArea.append("/>");
+             textArea.append("/>\n");
             return ;
         }
 
         // children, so close current tag
-         textArea.append(">");
+         textArea.append(">\n");
         while (child != null) {
             // print children recursively
             displayMetadata(child, level + 1);
@@ -100,7 +100,7 @@ public class Metadata {
 
         // print close tag of element
         indent(level);
-         textArea.append("</" + node.getNodeName() + ">");
+         textArea.append("</" + node.getNodeName() + "> \n");
     
     
     }
