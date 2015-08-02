@@ -80,6 +80,7 @@ public class Main extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Image Processing Tool");
         setForeground(new java.awt.Color(195, 243, 231));
+        setMinimumSize(new java.awt.Dimension(866, 550));
         setType(java.awt.Window.Type.UTILITY);
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
         getContentPane().add(jTabbedPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(150, 20, 530, 390));
@@ -191,7 +192,7 @@ public class Main extends javax.swing.JFrame {
     private void metaDatamenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_metaDatamenuActionPerformed
         metadata = new Metadata();
         textArea =metadata.readAndDisplayMetadata(namePathImage);
-        jTabbedPane1.add("MetaData",textArea);
+        jTabbedPane1.addTab("MetaData",textArea);
     }//GEN-LAST:event_metaDatamenuActionPerformed
 
     private void saveasmenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveasmenuActionPerformed
@@ -238,13 +239,15 @@ public class Main extends javax.swing.JFrame {
             savepath=saveFile;
             try {
                  ImageIO.write(bi,"jpeg", saveFile);
-                   savetrigger =false;
+                 savetrigger =false;
             } catch (IOException ex) {
            }
         }
     }
     
-    private void closedMenuItems(){
+    
+        
+        private void closedMenuItems(){
         savemenu.setEnabled(false);
         saveasmenu.setEnabled(false);
         metaDatamenu.setEnabled(false);
@@ -252,7 +255,6 @@ public class Main extends javax.swing.JFrame {
         clonemenu.setEnabled(false);
         rgbmenu.setEnabled(false);
         openmenu.setEnabled(true);
-        namePathImage = null;
         savepath = null;
         PathIm = null;
         jTabbedPane1.removeAll();
@@ -277,7 +279,7 @@ public class Main extends javax.swing.JFrame {
             
             try {
                 panel = getJContentPane1();
-                jTabbedPane1.add(namePathImage,panel);
+                jTabbedPane1.addTab(namePathImage,panel);
                  openMenuItems();
                 } catch(IOException e) {
                 System.out.println("io error: " + e.getMessage());
@@ -292,7 +294,8 @@ public class Main extends javax.swing.JFrame {
             jContentPane1.setLayout(new BorderLayout());
         }
        
-        jContentPane1.removeAll();
+        
+       // jContentPane1.removeAll();
         JLabel label = new JLabel();
         label.setHorizontalAlignment(JLabel.CENTER);
         if(namePathImage != null) {
