@@ -32,6 +32,7 @@ public class Main extends javax.swing.JFrame {
      */
     private File PathIm = null; 
     private File savepath = null; 
+    private int index;
     String namePathImage = null;
     JFileChooser chooser = new JFileChooser(".");
     private JPanel jContentPane1 = null;
@@ -46,6 +47,7 @@ public class Main extends javax.swing.JFrame {
     public Main() {
         initComponents();
         closedMenuItems();
+        index= 1;
     }
 
     
@@ -83,7 +85,13 @@ public class Main extends javax.swing.JFrame {
         setMinimumSize(new java.awt.Dimension(866, 550));
         setType(java.awt.Window.Type.UTILITY);
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
-        getContentPane().add(jTabbedPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(150, 20, 530, 390));
+
+        jTabbedPane1.setBackground(new java.awt.Color(185, 254, 246));
+        jTabbedPane1.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.LOWERED));
+        jTabbedPane1.setTabLayoutPolicy(javax.swing.JTabbedPane.SCROLL_TAB_LAYOUT);
+        jTabbedPane1.setAutoscrolls(true);
+        getContentPane().add(jTabbedPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(200, 20, 600, 390));
+        jTabbedPane1.getAccessibleContext().setAccessibleName("");
 
         jMenu1.setText("File");
 
@@ -149,6 +157,11 @@ public class Main extends javax.swing.JFrame {
 
         clonemenu.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/clone.png"))); // NOI18N
         clonemenu.setText("Clone");
+        clonemenu.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                clonemenuActionPerformed(evt);
+            }
+        });
         rgbmenu.add(clonemenu);
 
         jMenuItem7.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/RGB.jpg"))); // NOI18N
@@ -192,7 +205,7 @@ public class Main extends javax.swing.JFrame {
     private void metaDatamenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_metaDatamenuActionPerformed
         metadata = new Metadata();
         textArea =metadata.readAndDisplayMetadata(namePathImage);
-        jTabbedPane1.addTab("MetaData",textArea);
+        jTabbedPane1.add("MetaData",textArea);
     }//GEN-LAST:event_metaDatamenuActionPerformed
 
     private void saveasmenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveasmenuActionPerformed
@@ -203,6 +216,28 @@ public class Main extends javax.swing.JFrame {
     private void exitmenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exitmenuActionPerformed
         System.exit(0);
     }//GEN-LAST:event_exitmenuActionPerformed
+
+    private void clonemenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_clonemenuActionPerformed
+        JLabel label = new JLabel();
+        label.setHorizontalAlignment(JLabel.CENTER);
+         JPanel clonepane=new JPanel();
+        BufferedImage tempimage;
+        try {
+            tempimage = ImageIO.read(PathIm);
+            ImageIcon icon = new ImageIcon(tempimage);
+            label.setIcon(icon);
+        } catch (IOException ex) {
+            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+   
+        clonepane.add(label, BorderLayout.CENTER);
+        clonepane.revalidate();
+        
+        
+        jTabbedPane1.addTab("Clone"+index,clonepane);
+         
+    }//GEN-LAST:event_clonemenuActionPerformed
     
     private void save(){
         BufferedImage bi = null;
@@ -259,6 +294,7 @@ public class Main extends javax.swing.JFrame {
         PathIm = null;
         jTabbedPane1.removeAll();
         image=null;
+        
     } 
    
     private void openMenuItems(){
