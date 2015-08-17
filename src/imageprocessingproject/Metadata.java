@@ -44,7 +44,7 @@ public class Metadata {
                 String[] names = metadata.getMetadataFormatNames();
                 int length = names.length;
                 for (int i = 0; i < length; i++) {
-                    System.out.println( "Format name: " + names[ i ] );
+                    textArea.append( "\nFormat name: " + names[ i ] );
                     displayMetadata((Node) metadata.getAsTree(names[i]));
                 }
             }
@@ -70,7 +70,7 @@ public class Metadata {
         // print open tag of element
        
         indent(level);
-       textArea.append("<" + node.getNodeName());
+        textArea.append("\n <" + node.getNodeName());
         NamedNodeMap map = node.getAttributes();
         if (map != null) {
 
@@ -79,19 +79,19 @@ public class Metadata {
             for (int i = 0; i < length; i++) {
                 Node attr = map.item(i);
                 textArea.append(" " + attr.getNodeName() +
-                                 "=\"" + attr.getNodeValue() + "\"\n");
+                                 "=\"" + attr.getNodeValue() + "\"");
             }
         }
 
         Node child = node.getFirstChild();
         if (child == null) {
             // no children, so close element and return
-             textArea.append("/>\n");
+             textArea.append("/>");
             return ;
         }
 
         // children, so close current tag
-         textArea.append(">\n");
+         textArea.append(">");
         while (child != null) {
             // print children recursively
             displayMetadata(child, level + 1);
@@ -100,7 +100,7 @@ public class Metadata {
 
         // print close tag of element
         indent(level);
-         textArea.append("</" + node.getNodeName() + "> \n");
+         textArea.append("\n</" + node.getNodeName() + "> \n");
     
     
     }
