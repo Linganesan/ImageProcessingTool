@@ -8,7 +8,11 @@ package imageprocessingproject;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.GridLayout;
 import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.AdjustmentEvent;
 import java.awt.event.AdjustmentListener;
 import java.awt.geom.AffineTransform;
@@ -22,7 +26,9 @@ import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
+import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -32,6 +38,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollBar;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.SpringLayout;
 
 /**
  *
@@ -108,6 +115,7 @@ public class Main extends javax.swing.JFrame {
         setTitle("Image Processing Tool");
         setForeground(new java.awt.Color(195, 243, 231));
         setMinimumSize(new java.awt.Dimension(866, 550));
+        setPreferredSize(new java.awt.Dimension(900, 600));
         setType(java.awt.Window.Type.UTILITY);
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
@@ -115,7 +123,7 @@ public class Main extends javax.swing.JFrame {
         jTabbedPane1.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.LOWERED));
         jTabbedPane1.setTabLayoutPolicy(javax.swing.JTabbedPane.SCROLL_TAB_LAYOUT);
         jTabbedPane1.setAutoscrolls(true);
-        getContentPane().add(jTabbedPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(200, 20, 600, 390));
+        getContentPane().add(jTabbedPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 20, 850, 530));
         jTabbedPane1.getAccessibleContext().setAccessibleName("");
 
         jMenu1.setText("File");
@@ -209,7 +217,13 @@ public class Main extends javax.swing.JFrame {
         });
         rgbmenu.add(jMenuItem7);
 
+        jMenuItem2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/Image.PNG"))); // NOI18N
         jMenuItem2.setText("Scale");
+        jMenuItem2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem2ActionPerformed(evt);
+            }
+        });
         rgbmenu.add(jMenuItem2);
 
         jMenuBar1.add(rgbmenu);
@@ -313,7 +327,7 @@ public class Main extends javax.swing.JFrame {
     }//GEN-LAST:event_savemenuActionPerformed
 
     private void jMenuItem7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem7ActionPerformed
-        channel = new RGBchannel(namePathImage);
+        // channel = new RGBchannel(namePathImage);
     }//GEN-LAST:event_jMenuItem7ActionPerformed
 
     private void metaDatamenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_metaDatamenuActionPerformed
@@ -383,6 +397,10 @@ public class Main extends javax.swing.JFrame {
     private void decmenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_decmenuActionPerformed
         brightdec();
     }//GEN-LAST:event_decmenuActionPerformed
+
+    private void jMenuItem2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem2ActionPerformed
+        createScalePanel();
+    }//GEN-LAST:event_jMenuItem2ActionPerformed
 
     private void save() {
         BufferedImage bi = null;
@@ -566,7 +584,7 @@ public class Main extends javax.swing.JFrame {
         return newImage;
     }
 
-    BufferedImage prit(BufferedImage image, int xx) {
+    BufferedImage brightness(BufferedImage image, int xx) {
         int w = image.getWidth(this);
         int h = image.getHeight(this);
         int c, red, green, blue;
@@ -639,25 +657,19 @@ public class Main extends javax.swing.JFrame {
     public void brightinc() {
         binc += 10;
         BufferedImage temp;
-        temp = prit(image, binc);
+        temp = brightness(image, binc);
         index = jTabbedPane1.getSelectedIndex();
         System.out.println(binc);
-
         changeImage(index, temp);
     }
 
     public void brightdec() {
         bdec -= 10;
         BufferedImage temp;
-        temp = prit(image, bdec);
+        temp = brightness(image, bdec);
         index = jTabbedPane1.getSelectedIndex();
         System.out.println(bdec);
         changeImage(index, temp);
-
-        /**
-         * float a = 1.0f; float b = -20.0f; RescaleOp op = new RescaleOp(a, b,
-         * null); filter(op);*
-         */
     }
 
     private void changeImage(int index, BufferedImage ima) {
@@ -670,6 +682,32 @@ public class Main extends javax.swing.JFrame {
         temppane.add(label, BorderLayout.CENTER);
         //temppane.revalidate();
         jTabbedPane1.setComponentAt(index, temppane);
+    }
+
+    private void createScalePanel() {
+
+        final String[] labels = {"X: ", "Y:"};
+        int labelsLength = labels.length;
+        final JTextField[] textField = new JTextField[labels.length];
+        //Create and populate the panel.
+        JPanel p = new JPanel(new GridLayout(0, 2));
+        for (int i = 0; i < labelsLength; i++) {
+            JLabel l = new JLabel(labels[i], JLabel.TRAILING);
+            p.add(l);
+            textField[i] = new JTextField(10);
+            l.setLabelFor(textField[i]);
+            p.add(textField[i]);
+        }
+
+        int result = JOptionPane.showConfirmDialog(null, p, "Enter Scales", JOptionPane.OK_CANCEL_OPTION);
+        if (result == JOptionPane.OK_OPTION) {
+            int x = Integer.parseInt(textField[0].getText());
+            int y = Integer.parseInt(textField[1].getText());
+            BufferedImage img = scale(image, x, y);
+            addTab(img, "Scaled Image");
+
+        }
+
     }
 
     public static void main(String args[]) {
