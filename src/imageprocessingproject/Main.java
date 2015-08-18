@@ -11,6 +11,8 @@ import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.event.AdjustmentEvent;
 import java.awt.event.AdjustmentListener;
+import java.awt.geom.AffineTransform;
+import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import java.awt.image.BufferedImageOp;
 import java.awt.image.RescaleOp;
@@ -89,7 +91,9 @@ public class Main extends javax.swing.JFrame {
         jMenu3 = new javax.swing.JMenu();
         resetmenu = new javax.swing.JMenuItem();
         negmenu = new javax.swing.JMenuItem();
-        conmenu = new javax.swing.JMenuItem();
+        conmenu = new javax.swing.JMenu();
+        jMenuItem3 = new javax.swing.JMenuItem();
+        jMenuItem4 = new javax.swing.JMenuItem();
         jMenu4 = new javax.swing.JMenu();
         incmenu = new javax.swing.JMenuItem();
         decmenu = new javax.swing.JMenuItem();
@@ -213,6 +217,7 @@ public class Main extends javax.swing.JFrame {
         jMenu3.setText("Tools");
 
         resetmenu.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_R, java.awt.event.InputEvent.CTRL_MASK));
+        resetmenu.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/reset.png"))); // NOI18N
         resetmenu.setText("Reset");
         resetmenu.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -222,6 +227,7 @@ public class Main extends javax.swing.JFrame {
         jMenu3.add(resetmenu);
 
         negmenu.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_N, java.awt.event.InputEvent.CTRL_MASK));
+        negmenu.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/negative.gif"))); // NOI18N
         negmenu.setText("Negative");
         negmenu.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -230,9 +236,20 @@ public class Main extends javax.swing.JFrame {
         });
         jMenu3.add(negmenu);
 
+        conmenu.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/Image.PNG"))); // NOI18N
         conmenu.setText("Contrast");
+
+        jMenuItem3.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_I, java.awt.event.InputEvent.SHIFT_MASK | java.awt.event.InputEvent.CTRL_MASK));
+        jMenuItem3.setText("Increase");
+        conmenu.add(jMenuItem3);
+
+        jMenuItem4.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_D, java.awt.event.InputEvent.SHIFT_MASK | java.awt.event.InputEvent.CTRL_MASK));
+        jMenuItem4.setText("Decrease");
+        conmenu.add(jMenuItem4);
+
         jMenu3.add(conmenu);
 
+        jMenu4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/Image.PNG"))); // NOI18N
         jMenu4.setText("Brightness");
 
         incmenu.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_I, java.awt.event.InputEvent.CTRL_MASK));
@@ -259,6 +276,7 @@ public class Main extends javax.swing.JFrame {
 
         jMenu2.setText("About");
 
+        projectmenu.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/INFO.PNG"))); // NOI18N
         projectmenu.setText("Project");
         projectmenu.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -413,6 +431,7 @@ public class Main extends javax.swing.JFrame {
         clonemenu.setEnabled(false);
         rgbmenu.setEnabled(false);
         histomenu.setEnabled(false);
+        jMenu3.setEnabled(false);
         //
         openmenu.setEnabled(true);
         savepath = null;
@@ -438,6 +457,7 @@ public class Main extends javax.swing.JFrame {
         clonemenu.setEnabled(true);
         rgbmenu.setEnabled(true);
         histomenu.setEnabled(true);
+        jMenu3.setEnabled(true);
         openmenu.setEnabled(false);
     }
 
@@ -587,6 +607,13 @@ public class Main extends javax.swing.JFrame {
 
     }
 
+    BufferedImage scale(BufferedImage image1, int rx, int ry) {
+        AffineTransform tx = new AffineTransform();
+        tx.scale(rx, ry);
+        AffineTransformOp op = new AffineTransformOp(tx, null);
+        return op.filter(image1, null);
+    }
+
     public int getAlpha(int p) {
         return ((p >> 24) & 0xFF);
     }
@@ -680,7 +707,7 @@ public class Main extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenuItem clonemenu;
     private javax.swing.JMenuItem closemenu;
-    private javax.swing.JMenuItem conmenu;
+    private javax.swing.JMenu conmenu;
     private javax.swing.JMenuItem decmenu;
     private javax.swing.JMenuItem exitmenu;
     private javax.swing.JMenuItem histomenu;
@@ -692,6 +719,8 @@ public class Main extends javax.swing.JFrame {
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JMenuItem jMenuItem2;
+    private javax.swing.JMenuItem jMenuItem3;
+    private javax.swing.JMenuItem jMenuItem4;
     private javax.swing.JMenuItem jMenuItem6;
     private javax.swing.JMenuItem jMenuItem7;
     private javax.swing.JTabbedPane jTabbedPane1;
