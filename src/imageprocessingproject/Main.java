@@ -6,7 +6,14 @@
 package imageprocessingproject;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Toolkit;
+import java.awt.event.AdjustmentEvent;
+import java.awt.event.AdjustmentListener;
 import java.awt.image.BufferedImage;
+import java.awt.image.BufferedImageOp;
+import java.awt.image.RescaleOp;
 import java.io.File;
 import java.io.IOException;
 import java.util.TreeSet;
@@ -16,8 +23,11 @@ import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollBar;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
@@ -30,8 +40,8 @@ public class Main extends javax.swing.JFrame {
     /**
      * Creates new form Main
      */
-    private File PathIm = null; 
-    private File savepath = null; 
+    private File PathIm = null;
+    private File savepath = null;
     private int index;
     String namePathImage = null;
     JFileChooser chooser = new JFileChooser(".");
@@ -41,16 +51,16 @@ public class Main extends javax.swing.JFrame {
     JTextArea textArea = null;
     RGBchannel channel;
     Metadata metadata;
-    BufferedImage image =null;
+    BufferedImage image = null;
     private boolean savetrigger = true;
-    
+    int binc, bdec;
+
     public Main() {
         initComponents();
         closedMenuItems();
-        index= 1;
+
     }
 
-    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -69,11 +79,22 @@ public class Main extends javax.swing.JFrame {
         savemenu = new javax.swing.JMenuItem();
         saveasmenu = new javax.swing.JMenuItem();
         metaDatamenu = new javax.swing.JMenuItem();
+        histomenu = new javax.swing.JMenuItem();
         closemenu = new javax.swing.JMenuItem();
         exitmenu = new javax.swing.JMenuItem();
         rgbmenu = new javax.swing.JMenu();
         clonemenu = new javax.swing.JMenuItem();
         jMenuItem7 = new javax.swing.JMenuItem();
+        jMenuItem2 = new javax.swing.JMenuItem();
+        jMenu3 = new javax.swing.JMenu();
+        resetmenu = new javax.swing.JMenuItem();
+        negmenu = new javax.swing.JMenuItem();
+        conmenu = new javax.swing.JMenuItem();
+        jMenu4 = new javax.swing.JMenu();
+        incmenu = new javax.swing.JMenuItem();
+        decmenu = new javax.swing.JMenuItem();
+        jMenu2 = new javax.swing.JMenu();
+        projectmenu = new javax.swing.JMenuItem();
 
         jMenuItem6.setText("jMenuItem6");
 
@@ -124,6 +145,7 @@ public class Main extends javax.swing.JFrame {
         });
         jMenu1.add(saveasmenu);
 
+        metaDatamenu.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_M, java.awt.event.InputEvent.CTRL_MASK));
         metaDatamenu.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/Metadata.jpg"))); // NOI18N
         metaDatamenu.setText("MetaData");
         metaDatamenu.addActionListener(new java.awt.event.ActionListener() {
@@ -132,6 +154,16 @@ public class Main extends javax.swing.JFrame {
             }
         });
         jMenu1.add(metaDatamenu);
+
+        histomenu.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_H, java.awt.event.InputEvent.CTRL_MASK));
+        histomenu.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/histo.gif"))); // NOI18N
+        histomenu.setText("Histogram");
+        histomenu.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                histomenuActionPerformed(evt);
+            }
+        });
+        jMenu1.add(histomenu);
 
         closemenu.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/close.png"))); // NOI18N
         closemenu.setText("Close");
@@ -173,29 +205,93 @@ public class Main extends javax.swing.JFrame {
         });
         rgbmenu.add(jMenuItem7);
 
+        jMenuItem2.setText("Scale");
+        rgbmenu.add(jMenuItem2);
+
         jMenuBar1.add(rgbmenu);
+
+        jMenu3.setText("Tools");
+
+        resetmenu.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_R, java.awt.event.InputEvent.CTRL_MASK));
+        resetmenu.setText("Reset");
+        resetmenu.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                resetmenuActionPerformed(evt);
+            }
+        });
+        jMenu3.add(resetmenu);
+
+        negmenu.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_N, java.awt.event.InputEvent.CTRL_MASK));
+        negmenu.setText("Negative");
+        negmenu.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                negmenuActionPerformed(evt);
+            }
+        });
+        jMenu3.add(negmenu);
+
+        conmenu.setText("Contrast");
+        jMenu3.add(conmenu);
+
+        jMenu4.setText("Brightness");
+
+        incmenu.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_I, java.awt.event.InputEvent.CTRL_MASK));
+        incmenu.setText("Increase");
+        incmenu.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                incmenuActionPerformed(evt);
+            }
+        });
+        jMenu4.add(incmenu);
+
+        decmenu.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_D, java.awt.event.InputEvent.CTRL_MASK));
+        decmenu.setText("Decrease");
+        decmenu.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                decmenuActionPerformed(evt);
+            }
+        });
+        jMenu4.add(decmenu);
+
+        jMenu3.add(jMenu4);
+
+        jMenuBar1.add(jMenu3);
+
+        jMenu2.setText("About");
+
+        projectmenu.setText("Project");
+        projectmenu.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                projectmenuActionPerformed(evt);
+            }
+        });
+        jMenu2.add(projectmenu);
+
+        jMenuBar1.add(jMenu2);
 
         setJMenuBar(jMenuBar1);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+
     private void openmenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openmenuActionPerformed
-            openDialog();
-                  
+        openDialog();
+
     }//GEN-LAST:event_openmenuActionPerformed
 
     private void closemenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_closemenuActionPerformed
-       closedMenuItems();
-        
-        
+        closedMenuItems();
+
+
     }//GEN-LAST:event_closemenuActionPerformed
 
     private void savemenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_savemenuActionPerformed
-       if(savetrigger)
-           saveAs();
-       else
-           save();
+        if (savetrigger) {
+            saveAs();
+        } else {
+            save();
+        }
     }//GEN-LAST:event_savemenuActionPerformed
 
     private void jMenuItem7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem7ActionPerformed
@@ -204,13 +300,13 @@ public class Main extends javax.swing.JFrame {
 
     private void metaDatamenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_metaDatamenuActionPerformed
         metadata = new Metadata();
-        textArea =metadata.readAndDisplayMetadata(namePathImage);
-        jTabbedPane1.add("MetaData",textArea);
+        textArea = metadata.readAndDisplayMetadata(namePathImage);
+        jTabbedPane1.add("MetaData", textArea);
     }//GEN-LAST:event_metaDatamenuActionPerformed
 
     private void saveasmenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveasmenuActionPerformed
         saveAs();
-      
+
     }//GEN-LAST:event_saveasmenuActionPerformed
 
     private void exitmenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exitmenuActionPerformed
@@ -218,47 +314,76 @@ public class Main extends javax.swing.JFrame {
     }//GEN-LAST:event_exitmenuActionPerformed
 
     private void clonemenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_clonemenuActionPerformed
-        JLabel label = new JLabel();
-        label.setHorizontalAlignment(JLabel.CENTER);
-         JPanel clonepane=new JPanel();
-        BufferedImage tempimage;
+        addTab(image, "Clone");
+    }//GEN-LAST:event_clonemenuActionPerformed
+
+    private void histomenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_histomenuActionPerformed
+        Histogram();
+    }//GEN-LAST:event_histomenuActionPerformed
+
+    private void projectmenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_projectmenuActionPerformed
+        JOptionPane jOptionPane = new JOptionPane();
+        JTextArea jTextArea = new JTextArea();
+        jTextArea.setEditable(false);
+        jTextArea.setText("Name : Linganesan \n"
+                + "Module : CS3712 \n"
+                + "Reg No : 120337H \n"
+                + "University : UOM \n"
+                + "Email Id : linganesan.12@cse.mrt.ac.lk\n"
+        );
+        jOptionPane.showMessageDialog(null,
+                jTextArea,
+                "Image Processing Tool",
+                JOptionPane.INFORMATION_MESSAGE);
+    }//GEN-LAST:event_projectmenuActionPerformed
+
+    private void negmenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_negmenuActionPerformed
+        BufferedImage temp = negativeimage(image);
+        addTab(temp, "Negative");
+
+    }//GEN-LAST:event_negmenuActionPerformed
+
+    private void resetmenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_resetmenuActionPerformed
         try {
-            tempimage = ImageIO.read(PathIm);
-            ImageIcon icon = new ImageIcon(tempimage);
-            label.setIcon(icon);
+            JPanel temppane = getJContentPane1();
+            index = jTabbedPane1.getSelectedIndex();
+            jTabbedPane1.setComponentAt(index, temppane);
+            binc = 0;
+            bdec = 0;
+            index = 0;
+
         } catch (IOException ex) {
             Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
-   
-        clonepane.add(label, BorderLayout.CENTER);
-        clonepane.revalidate();
-        
-        
-        jTabbedPane1.addTab("Clone"+index,clonepane);
-         
-    }//GEN-LAST:event_clonemenuActionPerformed
-    
-    private void save(){
+
+    }//GEN-LAST:event_resetmenuActionPerformed
+
+    private void incmenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_incmenuActionPerformed
+        brightinc();
+    }//GEN-LAST:event_incmenuActionPerformed
+
+    private void decmenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_decmenuActionPerformed
+        brightdec();
+    }//GEN-LAST:event_decmenuActionPerformed
+
+    private void save() {
         BufferedImage bi = null;
-        
+
         try {
             bi = ImageIO.read(PathIm);
         } catch (IOException ex) {
-            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+            //Logger.gteLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
         }
-      try {
-        ImageIO.write(bi,"jpeg", savepath);
+        try {
+            ImageIO.write(bi, "jpeg", savepath);
         } catch (IOException ex) {
-       }
-    
-    
-    
+        }
+
     }
-    
-    private void saveAs(){
+
+    private void saveAs() {
         BufferedImage bi = null;
-        
+
         try {
             bi = ImageIO.read(PathIm);
         } catch (IOException ex) {
@@ -271,72 +396,95 @@ public class Main extends javax.swing.JFrame {
         int rval = chooser.showSaveDialog(this);
         if (rval == JFileChooser.APPROVE_OPTION) {
             saveFile = chooser.getSelectedFile();
-            savepath=saveFile;
+            savepath = saveFile;
             try {
-                 ImageIO.write(bi,"jpeg", saveFile);
-                 savetrigger =false;
+                ImageIO.write(bi, "jpeg", saveFile);
+                savetrigger = false;
             } catch (IOException ex) {
-           }
+            }
         }
     }
-    
-    
-        
-        private void closedMenuItems(){
+
+    private void closedMenuItems() {
         savemenu.setEnabled(false);
         saveasmenu.setEnabled(false);
         metaDatamenu.setEnabled(false);
         closemenu.setEnabled(false);
         clonemenu.setEnabled(false);
         rgbmenu.setEnabled(false);
+        histomenu.setEnabled(false);
+        //
         openmenu.setEnabled(true);
         savepath = null;
         PathIm = null;
+        image = null;
+        namePathImage = null;
+        jContentPane1 = null;
+        jContentPane2 = null;
+        panel = null;
+        textArea = null;
+        binc = 0;
+        bdec = 0;
+        index = 0;
         jTabbedPane1.removeAll();
-        image=null;
-        
-    } 
-   
-    private void openMenuItems(){
+
+    }
+
+    private void openMenuItems() {
         savemenu.setEnabled(true);
         saveasmenu.setEnabled(true);
         metaDatamenu.setEnabled(true);
         closemenu.setEnabled(true);
         clonemenu.setEnabled(true);
         rgbmenu.setEnabled(true);
+        histomenu.setEnabled(true);
         openmenu.setEnabled(false);
-    } 
-    
+    }
+
+    public void addTab(BufferedImage image, String title) {
+
+        JLabel label = new JLabel();
+        label.setHorizontalAlignment(JLabel.CENTER);
+        JPanel temppane = new JPanel();
+        ImageIcon icon = new ImageIcon(image);
+        label.setIcon(icon);
+        temppane.add(label, BorderLayout.CENTER);
+        temppane.revalidate();
+
+        jTabbedPane1.addTab(title, temppane);
+
+    }
+
     private void openDialog() {
         if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
             //System.out.println("selectedFile = " + chooser.getSelectedFile());
             namePathImage = chooser.getSelectedFile().getAbsolutePath();
             //System.out.println("namePathImage = " + namePathImage);
-            
+
             try {
                 panel = getJContentPane1();
-                jTabbedPane1.addTab(namePathImage,panel);
-                 openMenuItems();
-                } catch(IOException e) {
+                jTabbedPane1.addTab(namePathImage, panel);
+
+                openMenuItems();
+            } catch (IOException e) {
                 System.out.println("io error: " + e.getMessage());
                 return;
             }
         }
     }
-    
+
     private JPanel getJContentPane1() throws IOException {
         if (jContentPane1 == null) {
             jContentPane1 = new JPanel();
             jContentPane1.setLayout(new BorderLayout());
         }
-       
-        
-       // jContentPane1.removeAll();
+
+        // jContentPane1.removeAll();
         JLabel label = new JLabel();
         label.setHorizontalAlignment(JLabel.CENTER);
-        if(namePathImage != null) {
+        if (namePathImage != null) {
             File file = new File(namePathImage);
-            PathIm =file;
+            PathIm = file;
             System.out.println("file path = " + file.getPath());
             image = ImageIO.read(file);
             ImageIcon icon = new ImageIcon(image);
@@ -345,14 +493,158 @@ public class Main extends javax.swing.JFrame {
             label.setText("namePathImage = " + namePathImage);
         }
         jContentPane1.add(label, BorderLayout.CENTER);
+
         jContentPane1.revalidate();
         return jContentPane1;
     }
-    
-    
-    /**
-     * @param args the command line arguments
-     */
+
+    public void Histogram() {
+        histogram m = new histogram(image, "Histogram");
+        Toolkit tk = Toolkit.getDefaultToolkit();
+        Dimension d = tk.getScreenSize();
+        m.setBounds(0, 0, (int) d.getWidth(), (int) d.getHeight());
+        m.setVisible(true);
+    }
+
+    BufferedImage negativeimage(BufferedImage image) {
+        int w = image.getWidth(this);
+        int h = image.getHeight(this);
+        int c, red, green, blue;
+        BufferedImage newImage = new BufferedImage(w, h, 1);
+        for (int y = 0; y < h; y++) {
+            for (int x = 0; x < w; x++) {
+                c = image.getRGB(x, y);
+                red = 255 - getRed(c);
+                green = 255 - getGreen(c);
+                blue = 255 - getBlue(c);
+
+                newImage.setRGB(x, y, createRGB(red, green, blue));
+
+            }
+
+        }
+        return newImage;
+
+    }
+
+    BufferedImage grayscale(BufferedImage image, int d) {
+        int c, red, green, blue, avg;
+        int w = image.getWidth(this);
+        int h = image.getHeight(this);
+        BufferedImage newImage = new BufferedImage(w, h, 1);
+
+        for (int y = 0; y < h; y++) {
+            for (int x = 0; x < w; x++) {
+                c = image.getRGB(x, y);
+                red = getRed(c);
+                green = getGreen(c);
+                blue = getBlue(c);
+                avg = (red + green + blue) / d;
+                newImage.setRGB(x, y, createRGB(avg, avg, avg));
+            }
+        }
+        return newImage;
+    }
+
+    BufferedImage prit(BufferedImage image, int xx) {
+        int w = image.getWidth(this);
+        int h = image.getHeight(this);
+        int c, red, green, blue;
+        BufferedImage newImage = new BufferedImage(w, h, 1);
+        for (int y = 0; y < h; y++) {
+            for (int x = 0; x < w; x++) {
+                c = image.getRGB(x, y);
+                red = getRed(c) + xx;
+                green = getGreen(c) + xx;
+                blue = getBlue(c) + xx;
+
+                if (red > 255) {
+                    red = 255;
+                }
+                if (green > 255) {
+                    green = 255;
+                }
+                if (blue > 255) {
+                    blue = 255;
+                }
+
+                if (red < 0) {
+                    red = 0;
+                }
+                if (green < 0) {
+                    green = 0;
+                }
+                if (blue < 0) {
+                    blue = 0;
+                }
+
+                newImage.setRGB(x, y, createRGB(red, green, blue));
+
+            }
+
+        }
+        return newImage;
+
+    }
+
+    public int getAlpha(int p) {
+        return ((p >> 24) & 0xFF);
+    }
+
+    public int getRed(int p) {
+        return ((p >> 16) & 0xFF);
+    }
+
+    public int getGreen(int p) {
+        return ((p >> 8) & 0xFF);
+    }
+
+    public int getBlue(int p) {
+        return (p & 0xff);
+    }
+
+    public int createRGB(int r, int g, int b) {
+        //alpha =FF
+        return new Color(r, g, b).getRGB();
+
+    }
+
+    public void brightinc() {
+        binc += 10;
+        BufferedImage temp;
+        temp = prit(image, binc);
+        index = jTabbedPane1.getSelectedIndex();
+        System.out.println(binc);
+
+        changeImage(index, temp);
+    }
+
+    public void brightdec() {
+        bdec -= 10;
+        BufferedImage temp;
+        temp = prit(image, bdec);
+        index = jTabbedPane1.getSelectedIndex();
+        System.out.println(bdec);
+        changeImage(index, temp);
+
+        /**
+         * float a = 1.0f; float b = -20.0f; RescaleOp op = new RescaleOp(a, b,
+         * null); filter(op);*
+         */
+    }
+
+    private void changeImage(int index, BufferedImage ima) {
+
+        JLabel label = new JLabel();
+        label.setHorizontalAlignment(JLabel.CENTER);
+        JPanel temppane = new JPanel();
+        ImageIcon icon = new ImageIcon(ima);
+        label.setIcon(icon);
+        temppane.add(label, BorderLayout.CENTER);
+        //temppane.revalidate();
+        jTabbedPane1.setComponentAt(index, temppane);
+    }
+
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
@@ -388,17 +680,29 @@ public class Main extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenuItem clonemenu;
     private javax.swing.JMenuItem closemenu;
+    private javax.swing.JMenuItem conmenu;
+    private javax.swing.JMenuItem decmenu;
     private javax.swing.JMenuItem exitmenu;
+    private javax.swing.JMenuItem histomenu;
+    private javax.swing.JMenuItem incmenu;
     private javax.swing.JMenu jMenu1;
+    private javax.swing.JMenu jMenu2;
+    private javax.swing.JMenu jMenu3;
+    private javax.swing.JMenu jMenu4;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JMenuItem jMenuItem1;
+    private javax.swing.JMenuItem jMenuItem2;
     private javax.swing.JMenuItem jMenuItem6;
     private javax.swing.JMenuItem jMenuItem7;
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JMenuItem metaDatamenu;
+    private javax.swing.JMenuItem negmenu;
     private javax.swing.JMenuItem openmenu;
+    private javax.swing.JMenuItem projectmenu;
+    private javax.swing.JMenuItem resetmenu;
     private javax.swing.JMenu rgbmenu;
     private javax.swing.JMenuItem saveasmenu;
     private javax.swing.JMenuItem savemenu;
     // End of variables declaration//GEN-END:variables
+
 }
