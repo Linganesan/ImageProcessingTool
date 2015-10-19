@@ -8,37 +8,23 @@ package imageprocessingproject;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.Toolkit;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.AdjustmentEvent;
-import java.awt.event.AdjustmentListener;
 import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
-import java.awt.image.BufferedImageOp;
-import java.awt.image.RescaleOp;
 import java.io.File;
 import java.io.IOException;
-import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
-import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JDialog;
 import javax.swing.JFileChooser;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JScrollBar;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
-import javax.swing.SpringLayout;
 
 /**
  *
@@ -49,10 +35,10 @@ public class Main extends javax.swing.JFrame {
     /**
      * Creates new form Main
      */
-    private File PathIm = null;
+    private File imagepath = null;
     private File savepath = null;
     private int index;
-    String namePathImage = null;
+    String nameImagePath = null;
     JFileChooser chooser = new JFileChooser(".");
     private JPanel jContentPane1 = null;
     private JPanel jContentPane2 = null;
@@ -82,6 +68,7 @@ public class Main extends javax.swing.JFrame {
         jMenuItem6 = new javax.swing.JMenuItem();
         jMenuItem1 = new javax.swing.JMenuItem();
         jTabbedPane1 = new javax.swing.JTabbedPane();
+        jLabel1 = new javax.swing.JLabel();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         openmenu = new javax.swing.JMenuItem();
@@ -125,6 +112,8 @@ public class Main extends javax.swing.JFrame {
         jTabbedPane1.setAutoscrolls(true);
         getContentPane().add(jTabbedPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 20, 850, 530));
         jTabbedPane1.getAccessibleContext().setAccessibleName("");
+
+        getContentPane().add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 0, 670, -1));
 
         jMenu1.setText("File");
 
@@ -306,16 +295,14 @@ public class Main extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-
+//Click open menu 
     private void openmenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openmenuActionPerformed
         openDialog();
 
     }//GEN-LAST:event_openmenuActionPerformed
-
+//Click close menu item
     private void closemenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_closemenuActionPerformed
         closedMenuItems();
-
-
     }//GEN-LAST:event_closemenuActionPerformed
 
     private void savemenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_savemenuActionPerformed
@@ -327,12 +314,12 @@ public class Main extends javax.swing.JFrame {
     }//GEN-LAST:event_savemenuActionPerformed
 
     private void jMenuItem7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem7ActionPerformed
-        // channel = new RGBchannel(namePathImage);
+        // channel = new RGBchannel(nameImagePath);
     }//GEN-LAST:event_jMenuItem7ActionPerformed
 
     private void metaDatamenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_metaDatamenuActionPerformed
         metadata = new Metadata();
-        textArea = metadata.readAndDisplayMetadata(namePathImage);
+        textArea = metadata.readAndDisplayMetadata(nameImagePath);
         jTabbedPane1.add("MetaData", textArea);
     }//GEN-LAST:event_metaDatamenuActionPerformed
 
@@ -406,7 +393,7 @@ public class Main extends javax.swing.JFrame {
         BufferedImage bi = null;
 
         try {
-            bi = ImageIO.read(PathIm);
+            bi = ImageIO.read(imagepath);
         } catch (IOException ex) {
             //Logger.gteLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -421,7 +408,7 @@ public class Main extends javax.swing.JFrame {
         BufferedImage bi = null;
 
         try {
-            bi = ImageIO.read(PathIm);
+            bi = ImageIO.read(imagepath);
         } catch (IOException ex) {
             Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -453,9 +440,9 @@ public class Main extends javax.swing.JFrame {
         //
         openmenu.setEnabled(true);
         savepath = null;
-        PathIm = null;
+        imagepath = null;
         image = null;
-        namePathImage = null;
+        nameImagePath = null;
         jContentPane1 = null;
         jContentPane2 = null;
         panel = null;
@@ -496,12 +483,12 @@ public class Main extends javax.swing.JFrame {
     private void openDialog() {
         if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
             //System.out.println("selectedFile = " + chooser.getSelectedFile());
-            namePathImage = chooser.getSelectedFile().getAbsolutePath();
-            //System.out.println("namePathImage = " + namePathImage);
+            nameImagePath = chooser.getSelectedFile().getAbsolutePath();
+            //System.out.println("nameImagePath = " + nameImagePath);
 
             try {
                 panel = getJContentPane1();
-                jTabbedPane1.addTab(namePathImage, panel);
+                jTabbedPane1.addTab(nameImagePath, panel);
 
                 openMenuItems();
             } catch (IOException e) {
@@ -520,15 +507,15 @@ public class Main extends javax.swing.JFrame {
         // jContentPane1.removeAll();
         JLabel label = new JLabel();
         label.setHorizontalAlignment(JLabel.CENTER);
-        if (namePathImage != null) {
-            File file = new File(namePathImage);
-            PathIm = file;
+        if (nameImagePath != null) {
+            File file = new File(nameImagePath);
+            imagepath = file;
             System.out.println("file path = " + file.getPath());
             image = ImageIO.read(file);
             ImageIcon icon = new ImageIcon(image);
             label.setIcon(icon);
         } else {
-            label.setText("namePathImage = " + namePathImage);
+            label.setText("namePathImage = " + nameImagePath);
         }
         jContentPane1.add(label, BorderLayout.CENTER);
 
@@ -750,6 +737,7 @@ public class Main extends javax.swing.JFrame {
     private javax.swing.JMenuItem exitmenu;
     private javax.swing.JMenuItem histomenu;
     private javax.swing.JMenuItem incmenu;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenu jMenu2;
     private javax.swing.JMenu jMenu3;
