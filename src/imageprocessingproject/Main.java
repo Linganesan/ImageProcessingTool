@@ -14,6 +14,9 @@ import java.awt.Toolkit;
 import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
+import java.awt.image.BufferedImageOp;
+import java.awt.image.ConvolveOp;
+import java.awt.image.Kernel;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
@@ -49,12 +52,12 @@ public class Main extends javax.swing.JFrame {
     Metadata metadata;
     BufferedImage image = null;
     private boolean savetrigger = true;
-    int binc, bdec,scalex,scaley;
-    
-    HashMap<String,BufferedImage> imglist;
+    int binc, bdec, scalex, scaley;
+
+    HashMap<String, BufferedImage> imglist;
 
     public Main() {
-        this.imglist = new HashMap<String,BufferedImage>();
+        this.imglist = new HashMap<String, BufferedImage>();
         initComponents();
         closedMenuItems();
 
@@ -309,7 +312,7 @@ public class Main extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-//Click open menu 
+//Click open menu
     private void openmenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openmenuActionPerformed
         openDialog();
 
@@ -328,7 +331,7 @@ public class Main extends javax.swing.JFrame {
     }//GEN-LAST:event_savemenuActionPerformed
 
     private void jMenuItem7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem7ActionPerformed
-        BufferedImage temp = grayscale(image,3);
+        BufferedImage temp = grayscale(image, 3);
         addTab(temp, "GrayScale");
     }//GEN-LAST:event_jMenuItem7ActionPerformed
 
@@ -405,7 +408,7 @@ public class Main extends javax.swing.JFrame {
     }//GEN-LAST:event_jMenuItem2ActionPerformed
 
     private void jMenuItem4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem4ActionPerformed
-        
+
     }//GEN-LAST:event_jMenuItem4ActionPerformed
 
     private void jMenuItem3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem3ActionPerformed
@@ -430,12 +433,12 @@ public class Main extends javax.swing.JFrame {
     private void saveAs() {
         BufferedImage bi = null;
 
-       // try {
-      bi=selectImage();
-            //bi = ImageIO.read(imagepath);
-       // } catch (IOException ex) {
+        // try {
+        bi = selectImage();
+        //bi = ImageIO.read(imagepath);
+        // } catch (IOException ex) {
         //    Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
-       // }
+        // }
         // Demonstrate "Save" dialog:
         File saveFile = imagepath;
         JFileChooser chooser = new JFileChooser();
@@ -495,8 +498,8 @@ public class Main extends javax.swing.JFrame {
         JLabel label = new JLabel();
         label.setHorizontalAlignment(JLabel.CENTER);
         JPanel temppane = new JPanel();
-        
-        Image scaled = image.getScaledInstance(500, 500, Image.SCALE_SMOOTH); 
+
+        Image scaled = image.getScaledInstance(500, 500, Image.SCALE_SMOOTH);
         ImageIcon icon = new ImageIcon(scaled);
         label.setIcon(icon);
         temppane.add(label, BorderLayout.CENTER);
@@ -523,30 +526,28 @@ public class Main extends javax.swing.JFrame {
             }
         }
     }
-private BufferedImage selectImage(){
-    index = jTabbedPane1.getSelectedIndex();
-    String s=jTabbedPane1.getTitleAt(index);
-     
-      
-   if(s=="Negative"){
-       return negativeimage(image);
-   }else if(s=="Clone"){
-       return image;
-   }else if(s=="Scaled Image"){
-       System.out.println("scale");
-       return imglist.get("scale");
-    }else if(imglist.containsKey("bright")){
-       System.out.println("bright");
-       return imglist.get("bright");
-   }else if(s=="GrayScale"){
-   return grayscale(image,3);
-   }else{
-       return null;
-    }
-        
-    
-}
 
+    private BufferedImage selectImage() {
+        index = jTabbedPane1.getSelectedIndex();
+        String s = jTabbedPane1.getTitleAt(index);
+
+        if (s == "Negative") {
+            return negativeimage(image);
+        } else if (s == "Clone") {
+            return image;
+        } else if (s == "Scaled Image") {
+            System.out.println("scale");
+            return imglist.get("scale");
+        } else if (imglist.containsKey("bright")) {
+            System.out.println("bright");
+            return imglist.get("bright");
+        } else if (s == "GrayScale") {
+            return grayscale(image, 3);
+        } else {
+            return null;
+        }
+
+    }
 
     private JPanel getJContentPane1() throws IOException {
         if (jContentPane1 == null) {
@@ -561,7 +562,7 @@ private BufferedImage selectImage(){
             imagepath = file;
             System.out.println("file path = " + file.getPath());
             image = ImageIO.read(file);
-            Image scaled = image.getScaledInstance(500, 500, Image.SCALE_SMOOTH); 
+            Image scaled = image.getScaledInstance(500, 500, Image.SCALE_SMOOTH);
             ImageIcon icon = new ImageIcon(scaled);
             label.setIcon(icon);
         } else {
@@ -573,6 +574,7 @@ private BufferedImage selectImage(){
         return jContentPane1;
     }
 //generate histogram
+
     public void Histogram() {
         histogram m = new histogram(image, "Histogram");
         Toolkit tk = Toolkit.getDefaultToolkit();
@@ -581,6 +583,7 @@ private BufferedImage selectImage(){
         m.setVisible(true);
     }
 //changed to negative image
+
     BufferedImage negativeimage(BufferedImage image) {
         int w = image.getWidth(this);
         int h = image.getHeight(this);
@@ -600,6 +603,7 @@ private BufferedImage selectImage(){
     }
 //change to grayscale image
 //Gray = (Red + Green + Blue) / 3
+
     BufferedImage grayscale(BufferedImage image, int d) {
         int c, red, green, blue, avg;
         int w = image.getWidth(this);
@@ -619,6 +623,7 @@ private BufferedImage selectImage(){
         return newImage;
     }
 //Change brightness of the selected image
+
     BufferedImage brightness(BufferedImage image, int xx) {
         int w = image.getWidth(this);
         int h = image.getHeight(this);
@@ -665,7 +670,7 @@ private BufferedImage selectImage(){
         AffineTransform tx = new AffineTransform();
         tx.scale(rx, ry);
         AffineTransformOp op = new AffineTransformOp(tx, null);
-        BufferedImage temp=op.filter(image1, null);
+        BufferedImage temp = op.filter(image1, null);
         return temp;
     }
 
@@ -714,7 +719,7 @@ private BufferedImage selectImage(){
         JLabel label = new JLabel();
         label.setHorizontalAlignment(JLabel.CENTER);
         JPanel temppane = new JPanel();
-        Image scaled = ima.getScaledInstance(500, 500, Image.SCALE_SMOOTH); 
+        Image scaled = ima.getScaledInstance(500, 500, Image.SCALE_SMOOTH);
         ImageIcon icon = new ImageIcon(scaled);
         label.setIcon(icon);
         temppane.add(label, BorderLayout.CENTER);
@@ -749,11 +754,127 @@ private BufferedImage selectImage(){
 
     }
 
+    BufferedImage meanFilter(BufferedImage img) {
+        int w = img.getWidth(null);
+        int h = img.getHeight(null);
+        BufferedImage subimage;
+        BufferedImage img2 = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
+        int data[] = new int[9];
+        int red[] = new int[9];
+        int green[] = new int[9];
+        int blue[] = new int[9];
+        for (int y = 1; y < h - 1; y++) {
+            for (int x = 1; x < w - 1; x++) {
+                subimage = img.getSubimage(x - 1, y - 1, 3, 3);
+                subimage.getRGB(0, 0, 3, 3, data, 0, 3);
+                for (int k = 0; k < 9; k++) {
+                    Color c = new Color(data[k]);
+                    red[k] = c.getRed();
+                    green[k] = c.getGreen();
+                    blue[k] = c.getBlue();
+                }
+                int r = meanValue(red);
+                int g = meanValue(green);
+                int b = meanValue(blue);
+                Color c = new Color(r, g, b);
+                img2.setRGB(x, y, c.getRGB());
+            }
+        }
+        return img2;
+    }
+
+    BufferedImage medianFilter(BufferedImage img) {
+        int w = img.getWidth(null);
+        int h = img.getHeight(null);
+        BufferedImage subimage;
+        BufferedImage img2 = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
+        int data[] = new int[9];
+        int red[] = new int[9];
+        int green[] = new int[9];
+        int blue[] = new int[9];
+        for (int y = 1; y < h - 1; y++) {
+            for (int x = 1; x < w - 1; x++) {
+                subimage = img.getSubimage(x - 1, y - 1, 3, 3);
+                subimage.getRGB(0, 0, 3, 3, data, 0, 3);
+                for (int k = 0; k < 9; k++) {
+                    Color c = new Color(data[k]);
+                    red[k] = c.getRed();
+                    green[k] = c.getGreen();
+                    blue[k] = c.getBlue();
+                }
+                int r = medianValue(red);
+                int g = medianValue(green);
+                int b = medianValue(blue);
+                Color c = new Color(r, g, b);
+                img2.setRGB(x, y, c.getRGB());
+            }
+        }
+        return img2;
+    }
+
+    int meanValue(int a[]) {
+        int sum = 0;
+        for (int i = 0; i < 9; i++) {
+            sum += a[i];
+        }
+        return sum / 9;
+    }
+
+    int medianValue(int a[]) {
+        int temp;
+        for (int i = 0; i < 8; i++) {
+            for (int j = i + 1; j < 9; j++) {
+                if (a[j] < a[i]) {
+                    temp = a[i];
+                    a[i] = a[j];
+                    a[j] = temp;
+                }
+            }
+        }
+        return a[4];
+    }
+
+    BufferedImage rotate(BufferedImage image1, int d, int px, int py) {
+        AffineTransform tx = new AffineTransform();
+        tx.rotate(d * Math.PI / 180, px, py);
+        AffineTransformOp op = new AffineTransformOp(tx, null);
+        return op.filter(image1, null);
+
+    }
+
+    private void filter(BufferedImageOp op) {
+        BufferedImage filteredImage = new BufferedImage(image.getWidth(), image.getHeight(), image.getType());
+        op.filter(image, filteredImage);
+        image = filteredImage;
+
+    }
+
+    private void convolve(float[] elements) {
+        Kernel kernel = new Kernel(3, 3, elements);
+        ConvolveOp op = new ConvolveOp(kernel);
+        filter(op);
+    }
+
+    public void blur() {
+        float weight = 1.0f / 9.0f;
+        float[] elements = new float[9];
+
+        for (int i = 0; i < 9; i++) {
+            elements[i] = weight;
+        }
+        convolve(elements);
+    }
+
+    public void sharpen() {
+        float[] elements = {0.0f, -1.0f, 0.0f, -1.0f, 5.0f, -1.0f, 0.0f, -1.0f, 0.0f};
+        convolve(elements);
+    }
+
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
+         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html
          */
         try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
