@@ -46,7 +46,6 @@ public class Main extends javax.swing.JFrame {
     private JPanel jContentPane2 = null;
     JPanel panel = null;
     JTextArea textArea = null;
-    RGBchannel channel;
     Metadata metadata;
     BufferedImage image = null;
     private boolean savetrigger = true;
@@ -249,6 +248,11 @@ public class Main extends javax.swing.JFrame {
 
         jMenuItem3.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_I, java.awt.event.InputEvent.SHIFT_MASK | java.awt.event.InputEvent.CTRL_MASK));
         jMenuItem3.setText("Increase");
+        jMenuItem3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem3ActionPerformed(evt);
+            }
+        });
         conmenu.add(jMenuItem3);
 
         jMenuItem4.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_D, java.awt.event.InputEvent.SHIFT_MASK | java.awt.event.InputEvent.CTRL_MASK));
@@ -324,7 +328,8 @@ public class Main extends javax.swing.JFrame {
     }//GEN-LAST:event_savemenuActionPerformed
 
     private void jMenuItem7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem7ActionPerformed
-        // channel = new RGBchannel(nameImagePath);
+        BufferedImage temp = grayscale(image,3);
+        addTab(temp, "GrayScale");
     }//GEN-LAST:event_jMenuItem7ActionPerformed
 
     private void metaDatamenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_metaDatamenuActionPerformed
@@ -400,8 +405,12 @@ public class Main extends javax.swing.JFrame {
     }//GEN-LAST:event_jMenuItem2ActionPerformed
 
     private void jMenuItem4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem4ActionPerformed
-        // TODO add your handling code here:
+        
     }//GEN-LAST:event_jMenuItem4ActionPerformed
+
+    private void jMenuItem3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem3ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jMenuItem3ActionPerformed
 
     private void save() {
         BufferedImage bi = null;
@@ -529,6 +538,8 @@ private BufferedImage selectImage(){
     }else if(imglist.containsKey("bright")){
        System.out.println("bright");
        return imglist.get("bright");
+   }else if(s=="GrayScale"){
+   return grayscale(image,3);
    }else{
        return null;
     }
@@ -588,6 +599,7 @@ private BufferedImage selectImage(){
         return newImage;
     }
 //change to grayscale image
+//Gray = (Red + Green + Blue) / 3
     BufferedImage grayscale(BufferedImage image, int d) {
         int c, red, green, blue, avg;
         int w = image.getWidth(this);
