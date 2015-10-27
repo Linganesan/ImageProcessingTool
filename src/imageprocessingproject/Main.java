@@ -9,12 +9,14 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridLayout;
+import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
@@ -48,9 +50,12 @@ public class Main extends javax.swing.JFrame {
     Metadata metadata;
     BufferedImage image = null;
     private boolean savetrigger = true;
-    int binc, bdec;
+    int binc, bdec,scalex,scaley;
+    
+    HashMap<String,BufferedImage> imglist;
 
     public Main() {
+        this.imglist = new HashMap<String,BufferedImage>();
         initComponents();
         closedMenuItems();
 
@@ -198,7 +203,7 @@ public class Main extends javax.swing.JFrame {
         rgbmenu.add(clonemenu);
 
         jMenuItem7.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/RGB.jpg"))); // NOI18N
-        jMenuItem7.setText("RGBChannel");
+        jMenuItem7.setText("Grayscale");
         jMenuItem7.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jMenuItem7ActionPerformed(evt);
@@ -248,6 +253,11 @@ public class Main extends javax.swing.JFrame {
 
         jMenuItem4.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_D, java.awt.event.InputEvent.SHIFT_MASK | java.awt.event.InputEvent.CTRL_MASK));
         jMenuItem4.setText("Decrease");
+        jMenuItem4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem4ActionPerformed(evt);
+            }
+        });
         conmenu.add(jMenuItem4);
 
         jMenu3.add(conmenu);
@@ -322,7 +332,7 @@ public class Main extends javax.swing.JFrame {
         textArea = metadata.readAndDisplayMetadata(nameImagePath);
         jTabbedPane1.add("MetaData", textArea);
     }//GEN-LAST:event_metaDatamenuActionPerformed
-
+//save as method call
     private void saveasmenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveasmenuActionPerformed
         saveAs();
 
@@ -389,6 +399,10 @@ public class Main extends javax.swing.JFrame {
         createScalePanel();
     }//GEN-LAST:event_jMenuItem2ActionPerformed
 
+    private void jMenuItem4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem4ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jMenuItem4ActionPerformed
+
     private void save() {
         BufferedImage bi = null;
 
@@ -407,13 +421,14 @@ public class Main extends javax.swing.JFrame {
     private void saveAs() {
         BufferedImage bi = null;
 
-        try {
-            bi = ImageIO.read(imagepath);
-        } catch (IOException ex) {
-            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
-        }
+       // try {
+      bi=selectImage();
+            //bi = ImageIO.read(imagepath);
+       // } catch (IOException ex) {
+        //    Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+       // }
         // Demonstrate "Save" dialog:
-        File saveFile = new File("ImageName." + "png");
+        File saveFile = imagepath;
         JFileChooser chooser = new JFileChooser();
         chooser.setSelectedFile(saveFile);
         int rval = chooser.showSaveDialog(this);
@@ -471,7 +486,9 @@ public class Main extends javax.swing.JFrame {
         JLabel label = new JLabel();
         label.setHorizontalAlignment(JLabel.CENTER);
         JPanel temppane = new JPanel();
-        ImageIcon icon = new ImageIcon(image);
+        
+        Image scaled = image.getScaledInstance(500, 500, Image.SCALE_SMOOTH); 
+        ImageIcon icon = new ImageIcon(scaled);
         label.setIcon(icon);
         temppane.add(label, BorderLayout.CENTER);
         temppane.revalidate();
@@ -497,13 +514,34 @@ public class Main extends javax.swing.JFrame {
             }
         }
     }
+private BufferedImage selectImage(){
+    index = jTabbedPane1.getSelectedIndex();
+    String s=jTabbedPane1.getTitleAt(index);
+     
+      
+   if(s=="Negative"){
+       return negativeimage(image);
+   }else if(s=="Clone"){
+       return image;
+   }else if(s=="Scaled Image"){
+       System.out.println("scale");
+       return imglist.get("scale");
+    }else if(imglist.containsKey("bright")){
+       System.out.println("bright");
+       return imglist.get("bright");
+   }else{
+       return null;
+    }
+        
+    
+}
+
 
     private JPanel getJContentPane1() throws IOException {
         if (jContentPane1 == null) {
             jContentPane1 = new JPanel();
             jContentPane1.setLayout(new BorderLayout());
         }
-
         // jContentPane1.removeAll();
         JLabel label = new JLabel();
         label.setHorizontalAlignment(JLabel.CENTER);
@@ -512,7 +550,8 @@ public class Main extends javax.swing.JFrame {
             imagepath = file;
             System.out.println("file path = " + file.getPath());
             image = ImageIO.read(file);
-            ImageIcon icon = new ImageIcon(image);
+            Image scaled = image.getScaledInstance(500, 500, Image.SCALE_SMOOTH); 
+            ImageIcon icon = new ImageIcon(scaled);
             label.setIcon(icon);
         } else {
             label.setText("namePathImage = " + nameImagePath);
@@ -522,7 +561,7 @@ public class Main extends javax.swing.JFrame {
         jContentPane1.revalidate();
         return jContentPane1;
     }
-
+//generate histogram
     public void Histogram() {
         histogram m = new histogram(image, "Histogram");
         Toolkit tk = Toolkit.getDefaultToolkit();
@@ -530,7 +569,7 @@ public class Main extends javax.swing.JFrame {
         m.setBounds(0, 0, (int) d.getWidth(), (int) d.getHeight());
         m.setVisible(true);
     }
-
+//changed to negative image
     BufferedImage negativeimage(BufferedImage image) {
         int w = image.getWidth(this);
         int h = image.getHeight(this);
@@ -544,14 +583,11 @@ public class Main extends javax.swing.JFrame {
                 blue = 255 - getBlue(c);
 
                 newImage.setRGB(x, y, createRGB(red, green, blue));
-
             }
-
         }
         return newImage;
-
     }
-
+//change to grayscale image
     BufferedImage grayscale(BufferedImage image, int d) {
         int c, red, green, blue, avg;
         int w = image.getWidth(this);
@@ -570,7 +606,7 @@ public class Main extends javax.swing.JFrame {
         }
         return newImage;
     }
-
+//Change brightness of the selected image
     BufferedImage brightness(BufferedImage image, int xx) {
         int w = image.getWidth(this);
         int h = image.getHeight(this);
@@ -608,6 +644,7 @@ public class Main extends javax.swing.JFrame {
             }
 
         }
+        imglist.put("bright", newImage);
         return newImage;
 
     }
@@ -616,7 +653,8 @@ public class Main extends javax.swing.JFrame {
         AffineTransform tx = new AffineTransform();
         tx.scale(rx, ry);
         AffineTransformOp op = new AffineTransformOp(tx, null);
-        return op.filter(image1, null);
+        BufferedImage temp=op.filter(image1, null);
+        return temp;
     }
 
     public int getAlpha(int p) {
@@ -664,7 +702,8 @@ public class Main extends javax.swing.JFrame {
         JLabel label = new JLabel();
         label.setHorizontalAlignment(JLabel.CENTER);
         JPanel temppane = new JPanel();
-        ImageIcon icon = new ImageIcon(ima);
+        Image scaled = ima.getScaledInstance(500, 500, Image.SCALE_SMOOTH); 
+        ImageIcon icon = new ImageIcon(scaled);
         label.setIcon(icon);
         temppane.add(label, BorderLayout.CENTER);
         //temppane.revalidate();
@@ -688,9 +727,10 @@ public class Main extends javax.swing.JFrame {
 
         int result = JOptionPane.showConfirmDialog(null, p, "Enter Scales", JOptionPane.OK_CANCEL_OPTION);
         if (result == JOptionPane.OK_OPTION) {
-            int x = Integer.parseInt(textField[0].getText());
-            int y = Integer.parseInt(textField[1].getText());
-            BufferedImage img = scale(image, x, y);
+            scalex = Integer.parseInt(textField[0].getText());
+            scaley = Integer.parseInt(textField[1].getText());
+            BufferedImage img = scale(image, scalex, scaley);
+            imglist.put("scale", img);
             addTab(img, "Scaled Image");
 
         }
