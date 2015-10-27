@@ -87,8 +87,10 @@ public class Main extends javax.swing.JFrame {
         exitmenu = new javax.swing.JMenuItem();
         rgbmenu = new javax.swing.JMenu();
         clonemenu = new javax.swing.JMenuItem();
-        jMenuItem7 = new javax.swing.JMenuItem();
         jMenuItem2 = new javax.swing.JMenuItem();
+        jMenuItem7 = new javax.swing.JMenuItem();
+        meanmenu = new javax.swing.JMenuItem();
+        mediamenu = new javax.swing.JMenuItem();
         jMenu3 = new javax.swing.JMenu();
         resetmenu = new javax.swing.JMenuItem();
         negmenu = new javax.swing.JMenuItem();
@@ -204,6 +206,15 @@ public class Main extends javax.swing.JFrame {
         });
         rgbmenu.add(clonemenu);
 
+        jMenuItem2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/Image.PNG"))); // NOI18N
+        jMenuItem2.setText("Scale");
+        jMenuItem2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem2ActionPerformed(evt);
+            }
+        });
+        rgbmenu.add(jMenuItem2);
+
         jMenuItem7.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/RGB.jpg"))); // NOI18N
         jMenuItem7.setText("Grayscale");
         jMenuItem7.addActionListener(new java.awt.event.ActionListener() {
@@ -213,14 +224,21 @@ public class Main extends javax.swing.JFrame {
         });
         rgbmenu.add(jMenuItem7);
 
-        jMenuItem2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/Image.PNG"))); // NOI18N
-        jMenuItem2.setText("Scale");
-        jMenuItem2.addActionListener(new java.awt.event.ActionListener() {
+        meanmenu.setText("Mean Filter");
+        meanmenu.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jMenuItem2ActionPerformed(evt);
+                meanmenuActionPerformed(evt);
             }
         });
-        rgbmenu.add(jMenuItem2);
+        rgbmenu.add(meanmenu);
+
+        mediamenu.setText("Median Filter");
+        mediamenu.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                mediamenuActionPerformed(evt);
+            }
+        });
+        rgbmenu.add(mediamenu);
 
         jMenuBar1.add(rgbmenu);
 
@@ -415,6 +433,28 @@ public class Main extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_jMenuItem3ActionPerformed
 
+    private void meanmenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_meanmenuActionPerformed
+        BufferedImage meanimage = null;
+        if (imglist.containsKey("mean")) {
+            meanimage = imglist.get("mean");
+        } else {
+            meanimage = image;
+        }
+        BufferedImage temp = medianFilter(meanimage);
+        addTab(temp, "Mean Filter");
+    }//GEN-LAST:event_meanmenuActionPerformed
+
+    private void mediamenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mediamenuActionPerformed
+        BufferedImage medianimage = null;
+        if (imglist.containsKey("median")) {
+            medianimage = imglist.get("median");
+        } else {
+            medianimage = image;
+        }
+        BufferedImage temp = meanFilter(medianimage);
+        addTab(temp, "Median Filter");
+    }//GEN-LAST:event_mediamenuActionPerformed
+
     private void save() {
         BufferedImage bi = null;
 
@@ -504,7 +544,6 @@ public class Main extends javax.swing.JFrame {
         label.setIcon(icon);
         temppane.add(label, BorderLayout.CENTER);
         temppane.revalidate();
-
         jTabbedPane1.addTab(title, temppane);
 
     }
@@ -543,8 +582,12 @@ public class Main extends javax.swing.JFrame {
             return imglist.get("bright");
         } else if (s == "GrayScale") {
             return grayscale(image, 3);
+        }  else if (s == "Mean Filter") {
+            return imglist.get("mean");
+        }  else if (s == "Median Filter") {
+            return imglist.get("median");
         } else {
-            return null;
+            return image;
         }
 
     }
@@ -757,16 +800,16 @@ public class Main extends javax.swing.JFrame {
     BufferedImage meanFilter(BufferedImage img) {
         int w = img.getWidth(null);
         int h = img.getHeight(null);
-        BufferedImage subimage;
-        BufferedImage img2 = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
+        BufferedImage tempimage;
+        BufferedImage meanimage = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
         int data[] = new int[9];
         int red[] = new int[9];
         int green[] = new int[9];
         int blue[] = new int[9];
         for (int y = 1; y < h - 1; y++) {
             for (int x = 1; x < w - 1; x++) {
-                subimage = img.getSubimage(x - 1, y - 1, 3, 3);
-                subimage.getRGB(0, 0, 3, 3, data, 0, 3);
+                tempimage = img.getSubimage(x - 1, y - 1, 3, 3);
+                tempimage.getRGB(0, 0, 3, 3, data, 0, 3);
                 for (int k = 0; k < 9; k++) {
                     Color c = new Color(data[k]);
                     red[k] = c.getRed();
@@ -777,25 +820,26 @@ public class Main extends javax.swing.JFrame {
                 int g = meanValue(green);
                 int b = meanValue(blue);
                 Color c = new Color(r, g, b);
-                img2.setRGB(x, y, c.getRGB());
+                meanimage.setRGB(x, y, c.getRGB());
             }
         }
-        return img2;
+        imglist.put("mean", meanimage);
+        return meanimage;
     }
 
     BufferedImage medianFilter(BufferedImage img) {
         int w = img.getWidth(null);
         int h = img.getHeight(null);
-        BufferedImage subimage;
-        BufferedImage img2 = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
+        BufferedImage tempimage;
+        BufferedImage medianimage = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
         int data[] = new int[9];
         int red[] = new int[9];
         int green[] = new int[9];
         int blue[] = new int[9];
         for (int y = 1; y < h - 1; y++) {
             for (int x = 1; x < w - 1; x++) {
-                subimage = img.getSubimage(x - 1, y - 1, 3, 3);
-                subimage.getRGB(0, 0, 3, 3, data, 0, 3);
+                tempimage = img.getSubimage(x - 1, y - 1, 3, 3);
+                tempimage.getRGB(0, 0, 3, 3, data, 0, 3);
                 for (int k = 0; k < 9; k++) {
                     Color c = new Color(data[k]);
                     red[k] = c.getRed();
@@ -806,11 +850,13 @@ public class Main extends javax.swing.JFrame {
                 int g = medianValue(green);
                 int b = medianValue(blue);
                 Color c = new Color(r, g, b);
-                img2.setRGB(x, y, c.getRGB());
+                medianimage.setRGB(x, y, c.getRGB());
             }
         }
-        return img2;
+        imglist.put("median", medianimage);
+        return medianimage;
     }
+//mean value calculation
 
     int meanValue(int a[]) {
         int sum = 0;
@@ -819,6 +865,7 @@ public class Main extends javax.swing.JFrame {
         }
         return sum / 9;
     }
+//median value calculation
 
     int medianValue(int a[]) {
         int temp;
@@ -834,19 +881,18 @@ public class Main extends javax.swing.JFrame {
         return a[4];
     }
 
-    BufferedImage rotate(BufferedImage image1, int d, int px, int py) {
-        AffineTransform tx = new AffineTransform();
-        tx.rotate(d * Math.PI / 180, px, py);
-        AffineTransformOp op = new AffineTransformOp(tx, null);
-        return op.filter(image1, null);
-
-    }
-
-    private void filter(BufferedImageOp op) {
+//    BufferedImage rotate(BufferedImage image1) {
+//        AffineTransform tx = new AffineTransform();
+//        tx.rotate(1 * Math.PI, 50, 50);
+//        AffineTransformOp op = new AffineTransformOp(tx, null);
+//        return op.filter(image1, null);
+//
+//    }
+    private BufferedImage filter(BufferedImageOp op) {
         BufferedImage filteredImage = new BufferedImage(image.getWidth(), image.getHeight(), image.getType());
         op.filter(image, filteredImage);
         image = filteredImage;
-
+        return image;
     }
 
     private void convolve(float[] elements) {
@@ -923,6 +969,8 @@ public class Main extends javax.swing.JFrame {
     private javax.swing.JMenuItem jMenuItem6;
     private javax.swing.JMenuItem jMenuItem7;
     private javax.swing.JTabbedPane jTabbedPane1;
+    private javax.swing.JMenuItem meanmenu;
+    private javax.swing.JMenuItem mediamenu;
     private javax.swing.JMenuItem metaDatamenu;
     private javax.swing.JMenuItem negmenu;
     private javax.swing.JMenuItem openmenu;
