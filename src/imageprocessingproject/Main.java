@@ -16,7 +16,9 @@ import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import java.awt.image.BufferedImageOp;
 import java.awt.image.ConvolveOp;
+import java.awt.image.ImageObserver;
 import java.awt.image.Kernel;
+import java.awt.image.PixelGrabber;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
@@ -94,6 +96,12 @@ public class Main extends javax.swing.JFrame {
         jMenu3 = new javax.swing.JMenu();
         resetmenu = new javax.swing.JMenuItem();
         negmenu = new javax.swing.JMenuItem();
+        jMenu5 = new javax.swing.JMenu();
+        verticalmenu = new javax.swing.JMenuItem();
+        horizontalmenu = new javax.swing.JMenuItem();
+        sharpenmenu = new javax.swing.JMenuItem();
+        blurmenu = new javax.swing.JMenuItem();
+        edgemenu = new javax.swing.JMenuItem();
         conmenu = new javax.swing.JMenu();
         jMenuItem3 = new javax.swing.JMenuItem();
         jMenuItem4 = new javax.swing.JMenuItem();
@@ -184,6 +192,7 @@ public class Main extends javax.swing.JFrame {
         });
         jMenu1.add(closemenu);
 
+        exitmenu.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F4, java.awt.event.InputEvent.ALT_MASK));
         exitmenu.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/Exit.jpg"))); // NOI18N
         exitmenu.setText("Exit");
         exitmenu.addActionListener(new java.awt.event.ActionListener() {
@@ -224,6 +233,7 @@ public class Main extends javax.swing.JFrame {
         });
         rgbmenu.add(jMenuItem7);
 
+        meanmenu.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/RGB.jpg"))); // NOI18N
         meanmenu.setText("Mean Filter");
         meanmenu.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -232,6 +242,7 @@ public class Main extends javax.swing.JFrame {
         });
         rgbmenu.add(meanmenu);
 
+        mediamenu.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/RGB.jpg"))); // NOI18N
         mediamenu.setText("Median Filter");
         mediamenu.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -263,6 +274,59 @@ public class Main extends javax.swing.JFrame {
             }
         });
         jMenu3.add(negmenu);
+
+        jMenu5.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/Image.PNG"))); // NOI18N
+        jMenu5.setText("Flip");
+
+        verticalmenu.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/Image.PNG"))); // NOI18N
+        verticalmenu.setText("Vertical");
+        verticalmenu.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                verticalmenuActionPerformed(evt);
+            }
+        });
+        jMenu5.add(verticalmenu);
+
+        horizontalmenu.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/Image.PNG"))); // NOI18N
+        horizontalmenu.setText("Horizontal");
+        horizontalmenu.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                horizontalmenuActionPerformed(evt);
+            }
+        });
+        jMenu5.add(horizontalmenu);
+
+        jMenu3.add(jMenu5);
+
+        sharpenmenu.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_T, java.awt.event.InputEvent.CTRL_MASK));
+        sharpenmenu.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/Image.PNG"))); // NOI18N
+        sharpenmenu.setText("Sharpen");
+        sharpenmenu.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                sharpenmenuActionPerformed(evt);
+            }
+        });
+        jMenu3.add(sharpenmenu);
+
+        blurmenu.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_B, java.awt.event.InputEvent.CTRL_MASK));
+        blurmenu.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/Image.PNG"))); // NOI18N
+        blurmenu.setText("Blur");
+        blurmenu.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                blurmenuActionPerformed(evt);
+            }
+        });
+        jMenu3.add(blurmenu);
+
+        edgemenu.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_E, java.awt.event.InputEvent.CTRL_MASK));
+        edgemenu.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/Image.PNG"))); // NOI18N
+        edgemenu.setText("Edge detect");
+        edgemenu.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                edgemenuActionPerformed(evt);
+            }
+        });
+        jMenu3.add(edgemenu);
 
         conmenu.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/Image.PNG"))); // NOI18N
         conmenu.setText("Contrast");
@@ -383,7 +447,6 @@ public class Main extends javax.swing.JFrame {
         jTextArea.setText("Name : Linganesan \n"
                 + "Module : CS3712 \n"
                 + "Reg No : 120337H \n"
-                + "University : UOM \n"
                 + "Email Id : linganesan.12@cse.mrt.ac.lk\n"
         );
         jOptionPane.showMessageDialog(null,
@@ -441,6 +504,7 @@ public class Main extends javax.swing.JFrame {
             meanimage = image;
         }
         BufferedImage temp = medianFilter(meanimage);
+        temp = medianFilter(temp);
         addTab(temp, "Mean Filter");
     }//GEN-LAST:event_meanmenuActionPerformed
 
@@ -452,8 +516,40 @@ public class Main extends javax.swing.JFrame {
             medianimage = image;
         }
         BufferedImage temp = meanFilter(medianimage);
+        temp = meanFilter(temp);
         addTab(temp, "Median Filter");
     }//GEN-LAST:event_mediamenuActionPerformed
+
+    private void sharpenmenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sharpenmenuActionPerformed
+        BufferedImage temp = sharpen(image);
+        imglist.put("sharp", temp);
+        addTab(temp, "Sharpen Image");
+    }//GEN-LAST:event_sharpenmenuActionPerformed
+
+    private void blurmenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_blurmenuActionPerformed
+        BufferedImage temp = blur(image);
+        temp = blur(temp);
+        imglist.put("blur", temp);
+        addTab(temp, "Blur Image");
+    }//GEN-LAST:event_blurmenuActionPerformed
+
+    private void edgemenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_edgemenuActionPerformed
+        BufferedImage temp = edge(image);
+        imglist.put("edge", temp);
+        addTab(temp, "Edge detect");
+    }//GEN-LAST:event_edgemenuActionPerformed
+
+    private void verticalmenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_verticalmenuActionPerformed
+        BufferedImage temp = invertVertical(image);
+        imglist.put("flipV", temp);
+        addTab(temp, "Flip Vertical");
+    }//GEN-LAST:event_verticalmenuActionPerformed
+
+    private void horizontalmenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_horizontalmenuActionPerformed
+        BufferedImage temp = invertHorizontal(image);
+        imglist.put("flipH", temp);
+        addTab(temp, "Flip Horizontal");
+    }//GEN-LAST:event_horizontalmenuActionPerformed
 
     private void save() {
         BufferedImage bi = null;
@@ -504,7 +600,6 @@ public class Main extends javax.swing.JFrame {
         rgbmenu.setEnabled(false);
         histomenu.setEnabled(false);
         jMenu3.setEnabled(false);
-        //
         openmenu.setEnabled(true);
         savepath = null;
         imagepath = null;
@@ -582,10 +677,20 @@ public class Main extends javax.swing.JFrame {
             return imglist.get("bright");
         } else if (s == "GrayScale") {
             return grayscale(image, 3);
-        }  else if (s == "Mean Filter") {
+        } else if (s == "Mean Filter") {
             return imglist.get("mean");
-        }  else if (s == "Median Filter") {
+        } else if (s == "Sharpen Image") {
+            return imglist.get("sharp");
+        } else if (s == "Edge detect") {
+            return imglist.get("edge");
+        } else if (s == "Median Filter") {
             return imglist.get("median");
+        } else if (s == "Blur Image") {
+            return imglist.get("blur");
+        } else if (s == "Flip Vertical") {
+            return imglist.get("flipV");
+        } else if (s == "Flip Horizontal") {
+            return imglist.get("flipH");
         } else {
             return image;
         }
@@ -709,6 +814,118 @@ public class Main extends javax.swing.JFrame {
 
     }
 
+    BufferedImage contrast(BufferedImage image, int xx) {
+        int w = image.getWidth(this);
+        int h = image.getHeight(this);
+        int c, red, green, blue;
+        BufferedImage newImage = new BufferedImage(w, h, 1);
+        for (int y = 0; y < h; y++) {
+            for (int x = 0; x < w; x++) {
+
+                c = image.getRGB(x, y);
+                //Retrieving the Red, Green and Blue section of every pixel  
+                red = getRed(c) + xx;
+                green = getGreen(c) + xx;
+                blue = getBlue(c) + xx;
+
+                //Rounding of to 255 
+                if (red > 255) {
+                    red = 255;
+                }
+                if (green > 255) {
+                    green = 255;
+                }
+                if (blue > 255) {
+                    blue = 255;
+                }
+
+                if (red < 0) {
+                    red = 0;
+                }
+                if (green < 0) {
+                    green = 0;
+                }
+                if (blue < 0) {
+                    blue = 0;
+                }
+
+                newImage.setRGB(x, y, createRGB(red, green, blue));
+
+            }
+
+        }
+        imglist.put("bright", newImage);
+        return newImage;
+
+    }
+
+    public BufferedImage invertVertical(BufferedImage image) {
+
+        int w = image.getWidth(this);
+        int h = image.getHeight(this);
+        int x = 0, y = 0;
+        int[] flippixels = new int[w * h];
+        int[] pixels = new int[w * h];
+
+        PixelGrabber pg = new PixelGrabber(image, x, y, w, h, pixels, 0, w);
+        try {
+            pg.grabPixels();
+        } catch (InterruptedException e) {
+            System.err.println("interrupted waiting for pixels!");
+            return null;
+        }
+        if ((pg.getStatus() & ImageObserver.ABORT) != 0) {
+            System.err.println("image fetch aborted or errored");
+            return null;
+        }
+        //Looping through every pixel of the input image 
+        for (int j = 0; j < h; j++) {
+            for (int i = 0; i < w; i++) {
+
+                flippixels[j * w + i] = pixels[j * w + (w - i - 1)];
+            }
+
+        }
+        BufferedImage flipimage = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
+        flipimage.setRGB(0, 0, w, h, flippixels, 0, w);
+
+        return flipimage;
+    }
+//flip horizontally
+
+    public BufferedImage invertHorizontal(BufferedImage image) {
+
+        int w = image.getWidth(this);
+        int h = image.getHeight(this);
+        int x = 0, y = 0;
+        int[] flippixels = new int[w * h];
+        int[] pixels = new int[w * h];
+
+        PixelGrabber pg = new PixelGrabber(image, x, y, w, h, pixels, 0, w);
+        try {
+            pg.grabPixels();
+        } catch (InterruptedException e) {
+            System.err.println("interrupted waiting for pixels!");
+            return null;
+        }
+        if ((pg.getStatus() & ImageObserver.ABORT) != 0) {
+            System.err.println("image fetch aborted or errored");
+            return null;
+        }
+        //Looping through every pixel of the input image 
+        for (int j = 0; j < h; j++) {
+            for (int i = 0; i < w; i++) {
+
+                flippixels[j * w + i] = pixels[(w * h - w * (j + 1)) + i];
+            }
+        }
+        BufferedImage flipimage = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
+        flipimage.setRGB(0, 0, w, h, flippixels, 0, w);
+
+        return flipimage;
+    }
+
+    //Scaleup the image
     BufferedImage scale(BufferedImage image1, int rx, int ry) {
         AffineTransform tx = new AffineTransform();
         tx.scale(rx, ry);
@@ -888,32 +1105,40 @@ public class Main extends javax.swing.JFrame {
 //        return op.filter(image1, null);
 //
 //    }
-    private BufferedImage filter(BufferedImageOp op) {
-        BufferedImage filteredImage = new BufferedImage(image.getWidth(), image.getHeight(), image.getType());
-        op.filter(image, filteredImage);
-        image = filteredImage;
-        return image;
+    private BufferedImage filter(BufferedImageOp op, BufferedImage img) {
+        BufferedImage filteredImage = new BufferedImage(img.getWidth(), img.getHeight(), img.getType());
+        op.filter(img, filteredImage);
+
+        img = filteredImage;
+        return img;
     }
 
-    private void convolve(float[] elements) {
+    private BufferedImage convolve(float[] elements, BufferedImage img) {
+        //do for 3X3 matrix
         Kernel kernel = new Kernel(3, 3, elements);
         ConvolveOp op = new ConvolveOp(kernel);
-        filter(op);
+        return filter(op, img);
     }
 
-    public void blur() {
+//Each pixel on a full 3×3 grid weighted by 1/9.
+    public BufferedImage blur(BufferedImage img) {
         float weight = 1.0f / 9.0f;
         float[] elements = new float[9];
 
         for (int i = 0; i < 9; i++) {
             elements[i] = weight;
         }
-        convolve(elements);
+        return convolve(elements, img);
     }
 
-    public void sharpen() {
+    public BufferedImage sharpen(BufferedImage img) {
         float[] elements = {0.0f, -1.0f, 0.0f, -1.0f, 5.0f, -1.0f, 0.0f, -1.0f, 0.0f};
-        convolve(elements);
+        return convolve(elements, img);
+    }
+
+    BufferedImage edge(BufferedImage img) {
+        float[] elements = {0.0f, -1.0f, 0.0f, -1.0f, 4.0f, -1.0f, 0.0f, -1.0f, 0.0f};
+        return convolve(elements, img);
     }
 
     public static void main(String args[]) {
@@ -949,18 +1174,22 @@ public class Main extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JMenuItem blurmenu;
     private javax.swing.JMenuItem clonemenu;
     private javax.swing.JMenuItem closemenu;
     private javax.swing.JMenu conmenu;
     private javax.swing.JMenuItem decmenu;
+    private javax.swing.JMenuItem edgemenu;
     private javax.swing.JMenuItem exitmenu;
     private javax.swing.JMenuItem histomenu;
+    private javax.swing.JMenuItem horizontalmenu;
     private javax.swing.JMenuItem incmenu;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenu jMenu2;
     private javax.swing.JMenu jMenu3;
     private javax.swing.JMenu jMenu4;
+    private javax.swing.JMenu jMenu5;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JMenuItem jMenuItem2;
@@ -979,6 +1208,8 @@ public class Main extends javax.swing.JFrame {
     private javax.swing.JMenu rgbmenu;
     private javax.swing.JMenuItem saveasmenu;
     private javax.swing.JMenuItem savemenu;
+    private javax.swing.JMenuItem sharpenmenu;
+    private javax.swing.JMenuItem verticalmenu;
     // End of variables declaration//GEN-END:variables
 
 }
