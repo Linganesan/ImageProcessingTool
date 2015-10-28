@@ -8,8 +8,6 @@ import java.awt.MediaTracker;
 import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
 import java.awt.image.PixelGrabber;
-import java.net.URL;
-import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 public class histogram extends JFrame
 {
@@ -22,7 +20,7 @@ public class histogram extends JFrame
 
     public histogram(BufferedImage name,String title)
     {
-                   super(title);
+        super(title);
         try
         {
             Dimension d=Toolkit.getDefaultToolkit().getScreenSize();
@@ -61,7 +59,7 @@ public class histogram extends JFrame
     }
 public void paint(Graphics g)
 {
-    g.drawImage(img,0,0,null);
+   // g.drawImage(img,0,0,null);
     int x=(w-256)/2;
     int lasty=h-h*his[0]/max_his;
     for(int i=0;i<256;i++,x++)

@@ -20,6 +20,7 @@ import java.awt.image.ImageObserver;
 import java.awt.image.Kernel;
 import java.awt.image.PixelGrabber;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.logging.Level;
@@ -420,6 +421,16 @@ public class Main extends javax.swing.JFrame {
     private void metaDatamenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_metaDatamenuActionPerformed
         metadata = new Metadata();
         textArea = metadata.readAndDisplayMetadata(nameImagePath);
+        try {
+            String s = textArea.getText();
+            File f = new File("metadata.txt");
+            FileWriter fw = new FileWriter(f);
+            fw.write(s);
+            fw.flush();
+            fw.close();
+        } catch (IOException ioe) {
+            System.out.println("Exception Caught : " + ioe.getMessage());
+        }
         jTabbedPane1.add("MetaData", textArea);
     }//GEN-LAST:event_metaDatamenuActionPerformed
 //save as method call
